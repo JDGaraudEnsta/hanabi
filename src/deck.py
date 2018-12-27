@@ -10,11 +10,16 @@ import random
 @unique
 class Color(Enum):
     "Card colors. Int values correspond to xterm's."
-    Red = 41
-    Blue = 44
-    Green = 42
-    White = 47
-    Yellow = 43
+    Red = 31
+    Blue = 34
+    Green = 32
+    White = 37
+    Yellow = 33
+    # Red = 41
+    # Blue = 44
+    # Green = 42
+    # White = 47
+    # Yellow = 43
 #    Multi = 6
 
     def __str__(self):
@@ -125,6 +130,7 @@ class Game:
             'p': self.play,
             'c': self.clue,
             'x': self.examine_piles,
+            'v': self.command  # cheat-code !
         }
         
     def turn(self):
@@ -133,7 +139,9 @@ class Game:
                "this is what you remember:",
                self.current_hand.str_clue(),
                "\n      this is what you see:     ",
-               self.hands[(self.current_player+1)%2]
+               self.hands[(self.current_player+1)%2],
+               "\n                                ",
+               self.hands[(self.current_player+1)%2].str_clue(),
         )
                
         choice = input("""What do you want to play?
@@ -141,7 +149,7 @@ class Game:
         give a (c)lue (RBGWY 12345)
         (p)lay a card (12345)
         e(x)amine the piles
->>> """)
+hanabi> """)
         
         # so here, choice is a 2 or 3 letters code:
         #  d2 (discard 2nd card)
@@ -169,7 +177,7 @@ class Game:
         self.red_coins += 1
         if self.red_coins == 3:
             # StopIteration will stop the main loop!
-            raise StopIteration("Game finished. You lose")
+            raise StopIteration()
 
          
     def discard(self, args):
@@ -200,8 +208,8 @@ class Game:
         else:
             # misplay!
             self.discard_pile.append(card)
+            print ("Kaboom! That was a bad idea!")
             self.add_red_coin()
-            print ("but that was a bad idea!")
         self.print_piles()
         
     def clue(self, args):
@@ -221,12 +229,25 @@ class Game:
     def examine_piles(self, unused_args):
         self.print_piles()
         raise ValueError()  # so next turn is not triggered
-    def print_piles(self):
+
+
+    def _bw_print_piles(self):
         print("    Discard:", self.discard_pile)
         for c in list(Color):
             print("%6s"%c, "pile:", self.piles[c])
         print ("Coins:", self.blue_coins, "blue,", self.red_coins, "red")
-                    
+    def _color_print_piles(self):
+        print("    Discard:", self.discard_pile)
+        for c in list(Color):
+            print("\033[%im"%c.value,  # start color
+                  "%6s"%c, "pile:", self.piles[c],
+                  '\033[0m'            # end color
+            )
+        print ("Coins:", self.blue_coins, "blue,", self.red_coins, "red")
+    def print_piles(self):
+        self._color_print_piles()
+        
+        
     def next_player(self):
         "Switch to next player."
         try:
@@ -239,6 +260,11 @@ class Game:
         self.current_player_name = self.players[self.current_player]
         self.current_hand = self.hands[self.current_player]
 
+    def command(self, args):
+        "Internal: run a python command from Hanabi"
+        print('About to run `%s`'%args)
+        eval(args)
+        raise ValueError()  # so next turn is not triggered
         
 if __name__ == "__main__":
     print ("Red 4 is:", Card(Color.Red, 4))
@@ -265,7 +291,11 @@ if __name__ == "__main__":
     game = Game(2)
     print ("Here are the hands:")
     print (game.hands)
-    
-    while True:
-        game.turn()
-        game.next_player()
+
+    try:
+        while True:
+            game.turn()
+            game.next_player()
+    except (KeyboardInterrupt, EOFError, StopIteration):
+        pass
+    print("\nGoodbye. Your score is", sum(game.piles.values()))
