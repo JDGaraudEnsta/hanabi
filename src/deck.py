@@ -24,6 +24,8 @@ class Color(Enum):
 
     def __str__(self):
         return self.name
+    def colorize(self, *args):
+        return '\033[%im'%self.value + ' '.join(map(str,args)) + '\033[0m'
     
 class Card:
     def __init__(self, color=None, number=None):
@@ -37,7 +39,7 @@ class Card:
     def __str__(self):
         return (str(self.color)[0] + str(self.number))
     def __repr__(self):
-        return str(self)
+        return self.color.colorize(str(self))
     
     def __eq__(self, c):
         "Return whether 2 cards are equal. Can compare 2 Card objects or their string value."
@@ -55,7 +57,7 @@ class Hand:
             self.cards.append(deck.draw())
         self._deck = deck  # no sure if I need it 
     def __str__(self):
-        return " ".join(map(str, self.cards))
+        return " ".join(map(repr, self.cards))
     def __repr__(self): return str(self)
 
     def str_clue(self):
@@ -160,7 +162,7 @@ hanabi> """)
         except KeyError as e:
             print (e, "is not a valid action. Try again.")
             self.turn()
-        except ValueError as e:
+        except (ValueError, IndexError) as e:
             print (e, "Try again")
             self.turn()
         
@@ -181,7 +183,8 @@ hanabi> """)
 
          
     def discard(self, args):
-        "Discard the args-th card from current hand."
+        "Discard the args-th card from current hand (the first if args is an empty string)."
+        if args.strip() == "": args = "1"
         icard = int(args)
         self.add_blue_coin()
         try:
@@ -190,6 +193,7 @@ hanabi> """)
             self.remove_blue_coin()
             raise
         self.discard_pile.append(card)
+        self.discard_pile.sort(key=str)
         print (self.current_player_name, "discards", card)
         
     def play(self, args):
@@ -213,7 +217,8 @@ hanabi> """)
         self.print_piles()
         
     def clue(self, args):
-        hint = args[0]
+        "Give a clue."
+        hint = args[0].upper()  # so cr is valid to clue Red
         if not hint in "12345RBGWY":
             raise ValueError("%s is not a valid clue."%hint)
         print (self.current_player_name, "gives a clue:", hint)
@@ -239,10 +244,7 @@ hanabi> """)
     def _color_print_piles(self):
         print("    Discard:", self.discard_pile)
         for c in list(Color):
-            print("\033[%im"%c.value,  # start color
-                  "%6s"%c, "pile:", self.piles[c],
-                  '\033[0m'            # end color
-            )
+            print(c.colorize("%6s"%c, "pile:", self.piles[c]))
         print ("Coins:", self.blue_coins, "blue,", self.red_coins, "red")
     def print_piles(self):
         self._color_print_piles()
@@ -263,7 +265,10 @@ hanabi> """)
     def command(self, args):
         "Internal: run a python command from Hanabi"
         print('About to run `%s`'%args)
-        eval(args)
+        try:
+            exec(args)
+        except Exception as e:
+            print('Error:', e)
         raise ValueError()  # so next turn is not triggered
         
 if __name__ == "__main__":
