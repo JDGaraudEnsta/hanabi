@@ -61,19 +61,16 @@ class Hand:
         
 class Deck:
     # Rules for making decks:
-    ones = 3
-    twos = threes = fours = 2
-    fives = 1
+    card_count = {1:3, 2:2, 3:2, 4:2, 5:1 }
     # Rules for dealing:
     cards_by_player = { 2:5, 3:5, 4:4, 5:4 }
     def __init__(self):
-        self.cards  \
-            = [ Card(c, 1) for c in list(Color) ] * self.ones \
-            + [ Card(c, 2) for c in list(Color) ] * self.twos \
-            + [ Card(c, 3) for c in list(Color) ] * self.threes \
-            + [ Card(c, 4) for c in list(Color) ] * self.fours \
-            + [ Card(c, 5) for c in list(Color) ] * self.fives
-
+        self.cards = []
+        for number, count in self.card_count.items():
+            for color in list(Color):
+                for _ in range(count):
+                    self.cards.append(Card(color, number))
+        
     def __str__(self):
         return " ".join(map(str, self.cards))
     
