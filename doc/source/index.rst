@@ -12,6 +12,13 @@ Contents:
    :maxdepth: 2
 
 
+Introduction
+============
+
+This package plays Hanabi, the best card game ever.
+
+
+
 
 Module reference
 ================
