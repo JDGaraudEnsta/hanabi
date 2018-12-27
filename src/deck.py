@@ -9,11 +9,12 @@ import random
 
 @unique
 class Color(Enum):
-    Red = 1
-    Blue = 2
-    Green = 3
-    White = 4
-    Yellow = 5
+    "Card colors. Int values correspond to xterm's."
+    Red = 41
+    Blue = 44
+    Green = 42
+    White = 47
+    Yellow = 43
 #    Multi = 6
 
     def __str__(self):
@@ -30,6 +31,8 @@ class Card:
 
     def __str__(self):
         return (str(self.color)[0] + str(self.number))
+    def __repr__(self):
+        return str(self)
     
     def __eq__(self, c):
         "Return whether 2 cards are equal. Can compare 2 Card objects or their string value."
@@ -45,18 +48,23 @@ class Hand:
         self.cards = []
         for i in range(n):
             self.cards.append(deck.draw())
+        self._deck = deck  # no sure if I need it 
     def __str__(self):
         return " ".join(map(str, self.cards))
     def __repr__(self): return str(self)
 
     def str_clue(self):
         return " ".join([c.str_clue() for c in self.cards])
-    
-    def play(self, card):
-        "Play the given card. Raise ValueError if it is not playable."
-        self.cards.remove(card) # raises the ValueError 
-        self.cards
 
+    def pop(self, i):
+        "Pop a card from the hand, and draw a new one."
+        if not 1 <= i <= len(self):
+            raise ValueError("%d is not a valid card index."%i)
+        i = i-1 # back to 0-based-indices
+        card = self.cards.pop(i)
+        self.cards.append(self._deck.draw())
+        return card
+        
     def __len__(self): return len(self.cards)
         
 class Deck:
@@ -103,12 +111,20 @@ class Game:
         self.deck.shuffle()
         self.hands = self.deck.deal(len(self.players))
 
+        self.discard_pile = []
+        self.piles = {}
+        for c in list(Color): self.piles[c]=0
+
+        self.blue_coins = 8
+        self.red_coins = 0
+        
         self.next_player()
 
         self.actions = {
             'd': self.discard,
             'p': self.play,
-            'c': self.clue
+            'c': self.clue,
+            'x': self.examine_piles,
         }
         
     def turn(self):
@@ -116,32 +132,83 @@ class Game:
         print (self.current_player_name,
                "this is what you remember:",
                self.current_hand.str_clue(),
-               "\nthis is what you see:", self.hands[(self.current_player+1)%2]
+               "\n      this is what you see:     ",
+               self.hands[(self.current_player+1)%2]
         )
                
         choice = input("""What do you want to play?
         (d)iscard a card (12345) 
-        give a (c)lue (RBGWY 12345), 
+        give a (c)lue (RBGWY 12345)
         (p)lay a card (12345)
-        ?""")
+        e(x)amine the piles
+>>> """)
         
         # so here, choice is a 2 or 3 letters code:
         #  d2 (discard 2nd card)
         #  cR (give Red clue) ... will become cRA (give Red to Alice)
         #  p5 (play 5th card)
-        self.actions[choice[0]](choice[1:])
+        try:
+            self.actions[choice[0]](choice[1:])
+        except KeyError as e:
+            print (e, "is not a valid action. Try again.")
+            self.turn()
+        except ValueError as e:
+            print (e, "Try again")
+            self.turn()
         
+    def add_blue_coin(self):
+        if self.blue_coins == 8:
+            raise ValueError("Already 8 blue coins. Can't get an extra one.")
+        self.blue_coins += 1
+    def remove_blue_coin(self):
+        if self.blue_coins == 0:
+            raise ValueError("No blue coin left.")
+        self.blue_coins -= 1
 
+    def add_red_coin(self):
+        self.red_coins += 1
+        if self.red_coins == 3:
+            # StopIteration will stop the main loop!
+            raise StopIteration("Game finished. You lose")
+
+         
     def discard(self, args):
         "Discard the args-th card from current hand."
-        pass
-
+        icard = int(args)
+        self.add_blue_coin()
+        try:
+            card = self.current_hand.pop(icard)
+        except ValueError:
+            self.remove_blue_coin()
+            raise
+        self.discard_pile.append(card)
+        print (self.current_player_name, "discards", card)
+        
     def play(self, args):
-        print("playing", args)
+        icard = int(args)
+        card = self.current_hand.pop(icard)
+        print (self.current_player_name, "tries to play", card, "... ",end="")
+
+        if (self.piles[card.color]+1 == card.number):
+            self.piles[card.color] += 1
+            print ("successfully!")
+            if self.piles[card.color] == 5:
+                try:
+                    self.add_blue_coin()
+                except ValueError: # it is valid to play a 5 when we have 8 coins. It is simply lost
+                    pass
+        else:
+            # misplay!
+            self.discard_pile.append(card)
+            self.add_red_coin()
+            print ("but that was a bad idea!")
+        self.print_piles()
         
     def clue(self, args):
-        print (self.current_player_name, "gives a clue:", args)
         hint = args[0]
+        if not hint in "12345RBGWY":
+            raise ValueError("%s is not a valid clue."%hint)
+        print (self.current_player_name, "gives a clue:", hint)
         #  player = args[1]  # if >=3 players
         for card in self.hands[self.other_player].cards:
             if hint in str(card):
@@ -149,6 +216,16 @@ class Game:
                     card.number_clue = hint
                 else:
                     card.color_clue = hint
+        self.remove_blue_coin()
+
+    def examine_piles(self, unused_args):
+        self.print_piles()
+        raise ValueError()  # so next turn is not triggered
+    def print_piles(self):
+        print("    Discard:", self.discard_pile)
+        for c in list(Color):
+            print("%6s"%c, "pile:", self.piles[c])
+        print ("Coins:", self.blue_coins, "blue,", self.red_coins, "red")
                     
     def next_player(self):
         "Switch to next player."
@@ -179,10 +256,10 @@ if __name__ == "__main__":
     print ("Is B1 in Alice's hand?", "B1" in alice.cards)
     
     try:
-        alice.play("B1")
-        print("Alice plays B1")
+        card = alice.pop(1)
+        print("Alice plays", card)
     except ValueError:
-        print("Alice can't play B1")
+        print("Alice can't play her 1st card")
         
     print ("\nLet's start a new game")
     game = Game(2)
