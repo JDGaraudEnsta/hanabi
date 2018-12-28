@@ -46,6 +46,8 @@ This project is for 3 to 4 students:
 
 * and its implementation: https://github.com/rjtobin/HanSim
 
+* https://fr.boardgamearena.com/#!gamepanel?game=hanabi
+
 ### Background ideas
 
 * https://en.wikipedia.org/wiki/KISS_principle

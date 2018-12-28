@@ -102,12 +102,15 @@ class Deck:
     card_count = {1:3, 2:2, 3:2, 4:2, 5:1 }
     # Rules for dealing:
     cards_by_player = { 2:5, 3:5, 4:4, 5:4 }
-    def __init__(self):
-        self.cards = []
-        for number, count in self.card_count.items():
-            for color in list(Color):
-                for _ in range(count):
-                    self.cards.append(Card(color, number))
+    def __init__(self, cards=None):
+        if cards is None:
+            self.cards = []
+            for number, count in self.card_count.items():
+                for color in list(Color):
+                    for _ in range(count):
+                        self.cards.append(Card(color, number))
+        else:
+            self.cards = cards
         
     def __str__(self):
         return " ".join([c.str_color() for c in self.cards])
@@ -135,32 +138,8 @@ class Deck:
 
 class Game:
     Players = ("Alice", "Benji", "Clara", "Dante", "Elric")
-    def __init__(self, multi=False, players=2):
+    def __init__(self, players=2, multi=False):
         "A game of Hanabi"
-        if isinstance(players, int):
-            assert(2 <= players <= 5)
-            self.players = self.Players[:players]
-        else: # assume it's the list of players
-            self.players = players
-
-        self.deck = Deck()
-        self.deck.shuffle()
-
-        # record deck and moves, for replay
-        self.moves = []
-        self.starting_deck = copy.deepcopy(self.deck)
-
-        self.hands = self.deck.deal(len(self.players))
-
-        self.discard_pile = Hand(None, 0)  #  I don't give it the deck, so it can't draw accidentaly a card
-        self.piles = {}
-        for c in list(Color): self.piles[c]=0
-
-        self.blue_coins = 8
-        self.red_coins = 0
-        
-        self.next_player()
-
         self.actions = {
             'd': self.discard,
             'p': self.play,
@@ -168,8 +147,36 @@ class Game:
             'x': self.examine_piles,
             '>': self.command  # cheat-code !
         }
+        self.reset()
 
+    def reset(self, players=2, multi=False, cards=None):
+        "Reset this game."
+        if isinstance(players, int):
+            assert(2 <= players <= 5)
+            self.players = self.Players[:players]
+        else: # assume it's the list of players
+            self.players = players
+
+        self.deck = Deck(cards)
+        if cards is None:
+            self.deck.shuffle()
+
+        # record deck and moves, for replay
+        self.moves = []
+        self.starting_deck = copy.deepcopy(self.deck)
+
+        self.hands = self.deck.deal(len(self.players))
+
+        self.current_player = None
+        self.next_player()
         self.last_player = None  # will be set the the last player, to allow last turn
+
+        self.discard_pile = Hand(None, 0)  #  I don't give it the deck, so it can't draw accidentaly a card
+        self.piles = dict(zip(list(Color), [0]*len(Color)))
+
+        self.blue_coins = 8
+        self.red_coins = 0
+
 
     def turn(self):
         "One round: ask the player what she wants to do, then update the game."
@@ -299,15 +306,18 @@ class Game:
         try:
             self.other_player = self.current_player
             self.current_player = (self.current_player+1)%len(self.players)
-        except AttributeError:  # very first time we call this function
+        except TypeError:  # triggered when self.current_player=None
             self.current_player = 0
             self.other_player = 1
 
         self.current_player_name = self.players[self.current_player]
         self.current_hand = self.hands[self.current_player]
 
+        # other nice ideas: https://stackoverflow.com/questions/23416381/circular-list-iterator-in-python
+        # itertools.cycle or players.append(pop(0))
+        
     def command(self, args):
-        "Internal: run a python command from Hanabi"
+        "Internal: run a python command from Hanabi."
         print('About to run `%s`'%args)
         try:
             exec(args)
@@ -325,36 +335,58 @@ class Game:
         self.save('autosave.py')
         print("\nGoodbye. Your score is", sum(self.piles.values()))
 
-    def save(self, filename):        
+    def save(self, filename):
+        """Save starting deck and list of moves."""
         f = open(filename, 'w')
         f.write("""
-        game = Game()
-        game.deck.cards = %r
-        moves = %r
-        """%( self.starting_deck,
+players = %r
+cards = %r
+moves = %r
+"""%( self.players,
+              self.starting_deck,
               self.moves
         ))
+        # fixme: seems that a deck's repr is its list of cards?
+
+    def load(self, filename):
+        """Load a saved game, replay the moves.
+
+        A saved game consists of the variables players, cards and moves.
+        """
+        f = open(filename)
+        # in python3, it is tricky to modify a variable with exec:
+        #   https://stackoverflow.com/questions/15086040/behavior-of-exec-function-in-python-2-and-python-3
+        # need globals for the Card and Color definitions, and loaded-dict for returned values
+        loaded = {}
+        for l in f:
+            exec(l, globals(), loaded)
+
+        print ('Loaded:', loaded)
+
+        self.reset(loaded['players'], loaded['cards'])
+        
+        
         
 if __name__ == "__main__":
-    print ("Red 4 is:", Card(Color.Red, 4))
+    # print ("Red 4 is:", Card(Color.Red, 4))
 
-    deck = Deck()
-    print("Unshuffled:", deck)
-    deck.shuffle()
-    print("Shuffled:", deck)
+    # deck = Deck()
+    # print("Unshuffled:", deck)
+    # deck.shuffle()
+    # print("Shuffled:", deck)
     
-    hands = deck.deal(5)
-    alice, benji, clara, devon, elric = hands
-    players = {0:"Alice", 1: "Benji", 2:"Clara", 3:"Dante", 4:"Elric"}
-    for i, h in enumerate(hands): print("%s's hand is %s"%(players[i], h))
+    # hands = deck.deal(5)
+    # alice, benji, clara, devon, elric = hands
+    # players = {0:"Alice", 1: "Benji", 2:"Clara", 3:"Dante", 4:"Elric"}
+    # for i, h in enumerate(hands): print("%s's hand is %s"%(players[i], h))
 
-    print ("Is B1 in Alice's hand?", "B1" in alice.cards)
+    # print ("Is B1 in Alice's hand?", "B1" in alice.cards)
     
-    try:
-        card = alice.pop(1)
-        print("Alice plays", card)
-    except ValueError:
-        print("Alice can't play her 1st card")
+    # try:
+    #     card = alice.pop(1)
+    #     print("Alice plays", card)
+    # except ValueError:
+    #     print("Alice can't play her 1st card")
         
     print ("\nLet's start a new game")
     game = Game(2)
