@@ -2,10 +2,11 @@
 Hanabi deck.
 """
 
-from enum import Enum          
-from enum import unique        
+import copy
 import random
 
+from enum import Enum          
+from enum import unique        
 
 @unique
 class Color(Enum):
@@ -24,6 +25,8 @@ class Color(Enum):
 
     def __str__(self):
         return self.name
+    def __repr__(self):
+        return 'Color.'+self.name
     def colorize(self, *args):
         return '\033[%im'%self.value + ' '.join(map(str,args)) + '\033[0m'
     
@@ -39,8 +42,11 @@ class Card:
     def __str__(self):
         return (str(self.color)[0] + str(self.number))
     def __repr__(self):
+        return ("Card(%s, %d)"%(repr(self.color), self.number))
+        
+    def str_color(self):
         return self.color.colorize(str(self))
-    
+
     def __eq__(self, c):
         "Return whether 2 cards are equal. Can compare 2 Card objects or their string value."
         return str(self) == str(c)
@@ -51,14 +57,19 @@ class Card:
 
 class Hand:
     def __init__(self, deck, n=5):
-        "A Hanabi hand, with n cards, drawn from the deck."
+        """A Hanabi hand, with n cards, drawn from the deck.
+        Also used for the discard pile.
+        """
+        #TODO: see if it's easier to derive from list
         self.cards = []
         for i in range(n):
             self.cards.append(deck.draw())
         self._deck = deck  # no sure if I need it 
+
     def __str__(self):
-        return " ".join(map(repr, self.cards))
-    def __repr__(self): return str(self)
+        return " ".join([c.str_color() for c in self.cards])
+    def __repr__(self):
+        return str(self)
 
     def str_clue(self):
         return " ".join([c.str_clue() for c in self.cards])
@@ -71,7 +82,10 @@ class Hand:
         card = self.cards.pop(i)
         self.cards.append(self._deck.draw())
         return card
-        
+
+    def append(self, c): self.cards.append(c)
+    def sort(self): self.cards.sort(key=str)
+    
     def __len__(self): return len(self.cards)
         
 class Deck:
@@ -87,8 +101,14 @@ class Deck:
                     self.cards.append(Card(color, number))
         
     def __str__(self):
-        return " ".join(map(str, self.cards))
-    
+        return " ".join([c.str_color() for c in self.cards])
+
+    def __repr__(self):
+        s = '['
+        s += ", ".join(map(repr, self.cards))
+        s += ']'
+        return s
+
     def shuffle(self):
         random.shuffle(self.cards)
     
@@ -116,9 +136,14 @@ class Game:
 
         self.deck = Deck()
         self.deck.shuffle()
+
+        # record deck and moves, for replay
+        self.moves = []
+        self.starting_deck = copy.deepcopy(self.deck)
+
         self.hands = self.deck.deal(len(self.players))
 
-        self.discard_pile = []
+        self.discard_pile = Hand(None, 0)  #  I don't give it the deck, so it can't draw accidentaly a card
         self.piles = {}
         for c in list(Color): self.piles[c]=0
 
@@ -157,6 +182,8 @@ hanabi> """)
         #  d2 (discard 2nd card)
         #  cR (give Red clue) ... will become cRA (give Red to Alice)
         #  p5 (play 5th card)
+
+        self.moves.append(choice)
         try:
             self.actions[choice[0]](choice[1:])
         except KeyError as e:
@@ -193,8 +220,8 @@ hanabi> """)
             self.remove_blue_coin()
             raise
         self.discard_pile.append(card)
-        self.discard_pile.sort(key=str)
-        print (self.current_player_name, "discards", card)
+        self.discard_pile.sort()
+        print (self.current_player_name, "discards", card.str_color())
         
     def play(self, args):
         icard = int(args)
@@ -270,6 +297,27 @@ hanabi> """)
         except Exception as e:
             print('Error:', e)
         raise ValueError()  # so next turn is not triggered
+
+    def run(self):
+        try:
+            while True:
+                self.turn()
+                self.next_player()
+        except (KeyboardInterrupt, EOFError, StopIteration):
+            pass
+        self.save('autosave.py')
+        print("\nGoodbye. Your score is", sum(self.piles.values()))
+
+    def save(self, filename):
+        f = open(filename, 'w')
+        f.write("""
+        game = Game()
+        game.deck.cards = {}
+        moves = {}
+        """.format(
+            repr(self.starting_deck),
+            repr(self.moves)
+        ))
         
 if __name__ == "__main__":
     print ("Red 4 is:", Card(Color.Red, 4))
@@ -297,10 +345,4 @@ if __name__ == "__main__":
     print ("Here are the hands:")
     print (game.hands)
 
-    try:
-        while True:
-            game.turn()
-            game.next_player()
-    except (KeyboardInterrupt, EOFError, StopIteration):
-        pass
-    print("\nGoodbye. Your score is", sum(game.piles.values()))
+    game.run()
