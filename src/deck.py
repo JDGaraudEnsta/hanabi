@@ -33,6 +33,7 @@ class Color(Enum):
     def __repr__(self):
         return 'Color.'+self.name
     def colorize(self, *args):
+        "Colorize the given string"
         return '\033[%im'%self.value + ' '.join(map(str,args)) + '\033[0m'
     
 class Card:
@@ -50,6 +51,7 @@ class Card:
         return ("Card(%r, %d)"%(self.color, self.number))
         
     def str_color(self):
+        "Colorized string for this card."
         return self.color.colorize(str(self))
 
     def __eq__(self, c):
@@ -216,10 +218,12 @@ hanabi> """)
             raise StopIteration()
 
          
-    def discard(self, args):
-        "Discard the args-th card from current hand (the first if args is an empty string)."
-        if args.strip() == "": args = "1"
-        icard = int(args)
+    def discard(self, index):
+        "Action: Discard the given card from current hand (the first if index is an empty string)."
+        try:
+            if index.strip() == "": index = "1"
+        except: pass
+        icard = int(index)
         self.add_blue_coin()
         try:
             card = self.current_hand.pop(icard)
@@ -228,10 +232,12 @@ hanabi> """)
             raise
         self.discard_pile.append(card)
         self.discard_pile.sort()
-        print (self.current_player_name, "discards", card.str_color())
+        print (self.current_player_name, "discards", card.str_color(),
+               "and now has %d blue coins."%self.blue_coins)
         
-    def play(self, args):
-        icard = int(args)
+    def play(self, index):
+        "Action: play the given card."
+        icard = int(index)
         card = self.current_hand.pop(icard)
         print (self.current_player_name, "tries to play", card, "... ",end="")
 
@@ -250,13 +256,13 @@ hanabi> """)
             self.add_red_coin()
         self.print_piles()
         
-    def clue(self, args):
-        "Give a clue."
-        hint = args[0].upper()  # so cr is valid to clue Red
+    def clue(self, clue):
+        "Action: give a clue."
+        hint = clue[0].upper()  # so cr is valid to clue Red
         if not hint in "12345RBGWY":
             raise ValueError("%s is not a valid clue."%hint)
         print (self.current_player_name, "gives a clue:", hint)
-        #  player = args[1]  # if >=3 players
+        #  player = clue[1]  # if >=3 players
         for card in self.hands[self.other_player].cards:
             if hint in str(card):
                 if hint in "12345":
@@ -265,10 +271,10 @@ hanabi> """)
                     card.color_clue = hint
         self.remove_blue_coin()
 
-    def examine_piles(self, unused_args):
+    def examine_piles(self, *unused):
+        "Action: look at the table."
         self.print_piles()
         raise ValueError()  # so next turn is not triggered
-
 
     def _bw_print_piles(self):
         print("    Discard:", self.discard_pile)

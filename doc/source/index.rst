@@ -18,7 +18,7 @@ Introduction
 This package plays Hanabi, the best card game ever.
 
 
-
+The Gitlab link is here: https://gitlab.ensta.fr/garaud/Hanabi
 
 Module reference
 ================

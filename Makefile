@@ -16,7 +16,7 @@ all: module doc
 module:
 	python3 setup.py install --user
 
-doc: module
+doc: README.html module
 	cd doc && make html
 
 clean:
@@ -26,3 +26,6 @@ clean:
 distclean: clean
 	pip3 uninstall -y hanabi
 uninstall: distclean
+
+%.html: %.md
+	pandoc -s --toc $< --css=./github-pandoc.css -o $@

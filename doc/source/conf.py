@@ -146,6 +146,10 @@ print ("Theme is: ", html_theme)
 # documentation.
 #
 # html_theme_options = {}
+# scipy acceptrait cette option:
+# html_theme_options = {
+#     "homepage": [("https://gitlab.ensta.fr/garaud/Hanabi", "gitlab link")]
+# }
 
 # Add any paths that contain custom themes here, relative to this directory.
 # html_theme_path = []
