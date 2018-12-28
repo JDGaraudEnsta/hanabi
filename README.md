@@ -29,7 +29,7 @@ This project is for 3 to 4 students:
 ### Week 2
 
 * Share info between groups
-* Stabilize the module; because from now on all devels will have to use it.
+* Stabilize the module: because from now on all devels will have to use it.
 
 * Guido: make an usable GUI
 * Aisha: Implement the random-AI and cheater-AI

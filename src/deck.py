@@ -9,6 +9,8 @@ import readline  # this simple import makes input use GNU readline
 from enum import Enum          
 from enum import unique        
 
+import ascii_art
+
 # FIXME:
 # currently the game stops when the last card is picked (raise IndexError)
 
@@ -179,28 +181,28 @@ class Game:
                "\n                                ",
                self.hands[(self.current_player+1)%2].str_clue(),
         )
-               
-        choice = input("""What do you want to play?
+        print("""What do you want to play?
         (d)iscard a card (12345) 
         give a (c)lue (RBGWY 12345)
         (p)lay a card (12345)
-        e(x)amine the piles
-hanabi> """)
-        
-        # so here, choice is a 2 or 3 letters code:
-        #  d2 (discard 2nd card)
-        #  cR (give Red clue) ... will become cRA (give Red to Alice)
-        #  p5 (play 5th card)
+        e(x)amine the piles""")
+        again = True
+        while again:
+            choice = input("hanabi> ")
 
-        self.moves.append(choice)
-        try:
-            self.actions[choice[0]](choice[1:])
-        except KeyError as e:
-            print (e, "is not a valid action. Try again.")
-            self.turn()
-        except (ValueError, IndexError) as e:
-            print (e, "Try again")
-            self.turn()
+            # so here, choice is a 2 or 3 letters code:
+            #  d2 (discard 2nd card)
+            #  cR (give Red clue) ... will become cRA (give Red to Alice)
+            #  p5 (play 5th card)
+
+            self.moves.append(choice)
+            try:
+                self.actions[choice[0]](choice[1:])
+                again = False
+            except KeyError as e:
+                print (e, "is not a valid action. Try again.")
+            except (ValueError, IndexError) as e:
+                print (e, "Try again")
         
     def add_blue_coin(self):
         if self.blue_coins == 8:
@@ -244,6 +246,7 @@ hanabi> """)
         if (self.piles[card.color]+1 == card.number):
             self.piles[card.color] += 1
             print ("successfully!")
+            print (card.color.colorize(ascii_art.fw1))
             if self.piles[card.color] == 5:
                 try:
                     self.add_blue_coin()
@@ -252,7 +255,8 @@ hanabi> """)
         else:
             # misplay!
             self.discard_pile.append(card)
-            print ("Kaboom! That was a bad idea!")
+            print ("That was a bad idea!")
+            print (ascii_art.kaboom)
             self.add_red_coin()
         self.print_piles()
         
@@ -321,7 +325,7 @@ hanabi> """)
         self.save('autosave.py')
         print("\nGoodbye. Your score is", sum(self.piles.values()))
 
-    def save(self, filename):
+    def save(self, filename):        
         f = open(filename, 'w')
         f.write("""
         game = Game()
