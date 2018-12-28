@@ -4,9 +4,14 @@ Hanabi deck.
 
 import copy
 import random
+import readline  # this simple import makes input use GNU readline
 
 from enum import Enum          
 from enum import unique        
+
+# FIXME:
+# currently the game stops when the last card is picked (raise IndexError)
+
 
 @unique
 class Color(Enum):
@@ -159,7 +164,9 @@ class Game:
             'x': self.examine_piles,
             '>': self.command  # cheat-code !
         }
-        
+
+        self.last_player = None  # will be set the the last player, to allow last turn
+
     def turn(self):
         "One round: ask the player what she wants to do, then update the game."
         print (self.current_player_name,
