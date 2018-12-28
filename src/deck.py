@@ -42,7 +42,7 @@ class Card:
     def __str__(self):
         return (str(self.color)[0] + str(self.number))
     def __repr__(self):
-        return ("Card(%s, %d)"%(repr(self.color), self.number))
+        return ("Card(%r, %d)"%(self.color, self.number))
         
     def str_color(self):
         return self.color.colorize(str(self))
@@ -157,7 +157,7 @@ class Game:
             'p': self.play,
             'c': self.clue,
             'x': self.examine_piles,
-            'v': self.command  # cheat-code !
+            '>': self.command  # cheat-code !
         }
         
     def turn(self):
@@ -312,11 +312,10 @@ hanabi> """)
         f = open(filename, 'w')
         f.write("""
         game = Game()
-        game.deck.cards = {}
-        moves = {}
-        """.format(
-            repr(self.starting_deck),
-            repr(self.moves)
+        game.deck.cards = %r
+        moves = %r
+        """%( self.starting_deck,
+              self.moves
         ))
         
 if __name__ == "__main__":
