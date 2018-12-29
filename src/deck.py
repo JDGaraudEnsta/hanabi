@@ -4,12 +4,16 @@ Hanabi deck.
 
 import copy
 import random
-import readline  # this simple import makes input use GNU readline
+import readline  # this greatly improves `input`
 
 from enum import Enum          
 from enum import unique        
 
-import ascii_art
+# kludge so it works when installed or from localdir directly
+try:
+    from . import ascii_art
+except SystemError:
+    import ascii_art
 
 # FIXME:
 # currently the game stops when the last card is picked (raise IndexError)
@@ -37,7 +41,8 @@ class Color(Enum):
     def colorize(self, *args):
         "Colorize the given string"
         return '\033[%im'%self.value + ' '.join(map(str,args)) + '\033[0m'
-    
+
+
 class Card:
     def __init__(self, color=None, number=None):
         "A hanabi card."
@@ -63,6 +68,7 @@ class Card:
     def str_clue(self):
         "What I know about this card."
         return (self.color_clue or '*') + (self.number_clue or '*') 
+
 
 class Hand:
     def __init__(self, deck, n=5):
@@ -96,7 +102,8 @@ class Hand:
     def sort(self): self.cards.sort(key=str)
     
     def __len__(self): return len(self.cards)
-        
+
+
 class Deck:
     # Rules for making decks:
     card_count = {1:3, 2:2, 3:2, 4:2, 5:1 }
@@ -253,7 +260,8 @@ class Game:
         if (self.piles[card.color]+1 == card.number):
             self.piles[card.color] += 1
             print ("successfully!")
-            print (card.color.colorize(ascii_art.fw1))
+            print (card.color.colorize(
+                ascii_art.fireworks[self.piles[card.color]]))
             if self.piles[card.color] == 5:
                 try:
                     self.add_blue_coin()

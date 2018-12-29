@@ -12,28 +12,38 @@ A python3 module that knows Hanabi:
 
 This project is for 3 to 4 students:
 
-* Aisha is in charge of the AI
-* Cliona is in charge of the main module and command-line interface
-* Guido is in charge of the GUI
+* Aisha is in charge of the AI.
+* Cliona is in charge of the main module and command-line interface.
 * Electra is the free-electron: project manager, superviser, end-user, tester, debugger.
+* Guido is in charge of the GUI.
+
+Make sure you discuss a lot, and share information. 
+This will help designing a readable/usable code.
 
 
 ### Week 1
 
-* Electra: fast-prototype the module's interface, keeping in mind the 3 use-cases: command-line, GUI and AI auto-play.
-* Cliona: program a simple CLI (keep it simple).
+* Electra: fast-prototype the module's interface, keeping in mind the 3 use-cases: command-line, GUI and AI auto-play. Very quickly, we'll want a "replay" feature, for debugging: design a way to do this.
+* Cliona: program the module and a CLI (keep it simple).
 * Aisha: read the article, design you own idea, summarize the algorithm(s). Write 1 or 2 algorithms (will help the design of module's interface).
 * Guido: try a simple GUI (PySide), start experimenting, prepare canvas.
 
 
 ### Week 2
 
-* Share info between groups
 * Stabilize the module: because from now on all devels will have to use it.
 
 * Guido: make an usable GUI
 * Aisha: Implement the random-AI and cheater-AI
 * Cliona and Electra: play a few games. Design a way to replay games (test-suite). Keep track of score, so that Aisha has someone to compete against.
+
+### Week 3
+
+* Test, experiment, put in production.
+* Everyone designs a more advanced AI.
+* Someone can take care of 3-5 players.
+* Write short report, documentation (e.g. sphinx), ...
+
 
 
 ## Bibliography
@@ -53,4 +63,4 @@ This project is for 3 to 4 students:
 * https://en.wikipedia.org/wiki/KISS_principle
 * http://www.catb.org/esr/writings/taoup/
 * http://www.catb.org/esr/writings/cathedral-bazaar/
-
+* https://en.wikipedia.org/wiki/Rubber_duck_debugging
