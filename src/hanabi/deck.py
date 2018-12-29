@@ -354,14 +354,16 @@ class Game:
 
     def run(self):
         try:
-            nturn = len(self.players)
-            while nturn>=0:
-                self.turn()
+            last_players = list(self.players)
+            while last_players:
                 if len(self.deck.cards) == 0:
                     print()
-                    print("--> Last turns (%d left)"%nturn)
-                    nturn -= 1
-            print ("Game finished because deck exhausted")
+                    print("--> Last turns:",
+                          " ".join(last_players),
+                          "may still play once.")
+                    last_players.remove(self.players[self.current_player])
+                self.turn()
+#            print ("Game finished because deck exhausted")
         except (KeyboardInterrupt, EOFError, StopIteration) as e:
             print ('Game finished because of', e)
             pass
