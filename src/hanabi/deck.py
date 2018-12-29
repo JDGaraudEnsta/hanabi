@@ -95,7 +95,9 @@ class Hand:
             raise ValueError("%d is not a valid card index."%i)
         i = i-1 # back to 0-based-indices
         card = self.cards.pop(i)
-        self.cards.append(self._deck.draw())
+        try:
+            self.cards.append(self._deck.draw())
+        except IndexError: pass  # deck is empty
         return card
 
     def append(self, c): self.cards.append(c)
@@ -356,6 +358,7 @@ class Game:
             while nturn>=0:
                 self.turn()
                 if len(self.deck.cards) == 0:
+                    print()
                     print("--> Last turns (%d left)"%nturn)
                     nturn -= 1
             print ("Game finished because deck exhausted")
