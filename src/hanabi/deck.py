@@ -172,7 +172,8 @@ class Game:
         if cards is None:
             self.deck.shuffle()
 
-        print (self.deck)
+        # print (self.deck)
+
         # record deck and moves, for replay
         self.moves = []
         self.starting_deck = copy.deepcopy(self.deck)
@@ -295,6 +296,8 @@ class Game:
         hint = clue[0].upper()  # so cr is valid to clue Red
         if not hint in "12345RBGWY":
             raise ValueError("%s is not a valid clue."%hint)
+        self.remove_blue_coin() # will raise if no blue coin left
+        
         print (self.current_player_name, "gives a clue:", hint)
         #  player = clue[1]  # if >=3 players
         for card in self.hands[self.other_player].cards:
@@ -303,7 +306,6 @@ class Game:
                     card.number_clue = hint
                 else:
                     card.color_clue = hint
-        self.remove_blue_coin()
         self.next_player()
 
     def examine_piles(self, *unused):
