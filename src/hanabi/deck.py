@@ -147,12 +147,16 @@ class Game:
     Players = ("Alice", "Benji", "Clara", "Dante", "Elric")
     def __init__(self, players=2, multi=False):
         "A game of Hanabi"
+
+        # Actions are functions that a player may do.
+        # They should finish by a call to next_player, if needed.
         self.actions = {
             'd': self.discard,
             'p': self.play,
             'c': self.clue,
             'x': self.examine_piles,
-            '>': self.command  # cheat-code !
+            '>': self.command,  # cheat-code !
+            'l': self.load,
         }
         self.reset()
 
@@ -168,6 +172,7 @@ class Game:
         if cards is None:
             self.deck.shuffle()
 
+        print (self.deck)
         # record deck and moves, for replay
         self.moves = []
         self.starting_deck = copy.deepcopy(self.deck)
@@ -185,8 +190,12 @@ class Game:
         self.red_coins = 0
 
 
-    def turn(self):
-        "One round: ask the player what she wants to do, then update the game."
+    def turn(self, _choice=None):
+        """
+        Play one round: ask the player what she wants to do, then update the game.
+        If _choice is not None, play it instead of asking.
+        """
+        print()
         print (self.current_player_name,
                "this is what you remember:",
                self.current_hand.str_clue(),
@@ -200,19 +209,23 @@ class Game:
         give a (c)lue (RBGWY 12345)
         (p)lay a card (12345)
         e(x)amine the piles""")
-        again = True
-        while again:
-            choice = input("hanabi> ")
 
+        while True:
+            if _choice is None:
+                choice = input("hanabi> ")
+                if choice.strip()=='': continue
+            else:
+                print ('hanabi (auto)>', _choice)
+                choice = _choice
             # so here, choice is a 2 or 3 letters code:
             #  d2 (discard 2nd card)
             #  cR (give Red clue) ... will become cRA (give Red to Alice)
             #  p5 (play 5th card)
-
+            
             self.moves.append(choice)
             try:
                 self.actions[choice[0]](choice[1:])
-                again = False
+                return
             except KeyError as e:
                 print (e, "is not a valid action. Try again.")
             except (ValueError, IndexError) as e:
@@ -249,7 +262,8 @@ class Game:
         self.discard_pile.append(card)
         self.discard_pile.sort()
         print (self.current_player_name, "discards", card.str_color(),
-               "and now has %d blue coins."%self.blue_coins)
+               "and now we have %d blue coins."%self.blue_coins)
+        self.next_player()
         
     def play(self, index):
         "Action: play the given card."
@@ -274,6 +288,7 @@ class Game:
             print (ascii_art.kaboom)
             self.add_red_coin()
         self.print_piles()
+        self.next_player()
         
     def clue(self, clue):
         "Action: give a clue."
@@ -289,11 +304,11 @@ class Game:
                 else:
                     card.color_clue = hint
         self.remove_blue_coin()
+        self.next_player()
 
     def examine_piles(self, *unused):
         "Action: look at the table."
         self.print_piles()
-        raise ValueError()  # so next turn is not triggered
 
     def _bw_print_piles(self):
         print("    Discard:", self.discard_pile)
@@ -318,26 +333,24 @@ class Game:
             self.current_player = 0
             self.other_player = 1
 
-        self.current_player_name = self.players[self.current_player]
+        self.current_player_name = '\033[1m%s\033[0m'%self.players[self.current_player]
         self.current_hand = self.hands[self.current_player]
 
         # other nice ideas: https://stackoverflow.com/questions/23416381/circular-list-iterator-in-python
         # itertools.cycle or players.append(pop(0))
         
     def command(self, args):
-        "Internal: run a python command from Hanabi."
+        "Action: Run a python command from Hanabi (yes, it is a cheat code: self is the current Game)."
         print('About to run `%s`'%args)
         try:
             exec(args)
         except Exception as e:
             print('Error:', e)
-        raise ValueError()  # so next turn is not triggered
 
     def run(self):
         try:
             while True:
                 self.turn()
-                self.next_player()
         except (KeyboardInterrupt, EOFError, StopIteration):
             pass
         self.save('autosave.py')
@@ -370,10 +383,14 @@ moves = %r
             exec(l, globals(), loaded)
 
         print ('Loaded:', loaded)
-
-        self.reset(loaded['players'], loaded['cards'])
+        multi = False
+        players = loaded['players']
+        cards = loaded['cards']
+        moves = loaded['moves']
         
-        
+        self.reset(players, multi, cards)
+        for m in moves:
+            self.turn(m)
         
 if __name__ == "__main__":
     # print ("Red 4 is:", Card(Color.Red, 4))
