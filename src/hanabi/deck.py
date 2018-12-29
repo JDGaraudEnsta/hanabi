@@ -79,7 +79,7 @@ class Hand:
         self.cards = []
         for i in range(n):
             self.cards.append(deck.draw())
-        self._deck = deck  # no sure if I need it 
+        self._deck = deck  # not sure if I need it 
 
     def __str__(self):
         return " ".join([c.str_color() for c in self.cards])
@@ -123,7 +123,7 @@ class Deck:
         return " ".join([c.str_color() for c in self.cards])
 
     def __repr__(self):
-        s = '['
+        s =  '['
         s += ", ".join(map(repr, self.cards))
         s += ']'
         return s
@@ -132,7 +132,7 @@ class Deck:
         random.shuffle(self.cards)
     
     def draw(self):
-        "Draw the first card."
+        "Draw a card from the deck."
         return self.cards.pop(0)
         
     def deal(self, nhands):
@@ -146,7 +146,7 @@ class Deck:
 class Game:
     Players = ("Alice", "Benji", "Clara", "Dante", "Elric")
     def __init__(self, players=2, multi=False):
-        "A game of Hanabi"
+        "A game of Hanabi."
 
         # Actions are functions that a player may do.
         # They should finish by a call to next_player, if needed.
@@ -216,8 +216,8 @@ class Game:
                 choice = input("hanabi> ")
                 if choice.strip()=='': continue
             else:
-                print ('hanabi (auto)>', _choice)
-                choice = _choice
+                choice = _choice.pop(0)
+                print ('hanabi (auto)>', choice)
             # so here, choice is a 2 or 3 letters code:
             #  d2 (discard 2nd card)
             #  cR (give Red clue) ... will become cRA (give Red to Alice)
@@ -316,12 +316,13 @@ class Game:
         print("    Discard:", self.discard_pile)
         for c in list(Color):
             print("%6s"%c, "pile:", self.piles[c])
-        print ("Coins:", self.blue_coins, "blue,", self.red_coins, "red")
+        print ("     Coins:", self.blue_coins, "blue,", self.red_coins, "red")
     def _color_print_piles(self):
+        print("       Deck:", len(self.deck.cards))
         print("    Discard:", self.discard_pile)
         for c in list(Color):
             print(c.colorize("%6s"%c, "pile:", self.piles[c]))
-        print ("Coins:", self.blue_coins, "blue,", self.red_coins, "red")
+        print ("     Coins:", self.blue_coins, "blue,", self.red_coins, "red")
     def print_piles(self):
         self._color_print_piles()
         
@@ -351,9 +352,15 @@ class Game:
 
     def run(self):
         try:
-            while True:
+            nturn = len(self.players)
+            while nturn>=0:
                 self.turn()
-        except (KeyboardInterrupt, EOFError, StopIteration):
+                if len(self.deck.cards) == 0:
+                    print("--> Last turns (%d left)"%nturn)
+                    nturn -= 1
+            print ("Game finished because deck exhausted")
+        except (KeyboardInterrupt, EOFError, StopIteration) as e:
+            print ('Game finished because of', e)
             pass
         self.save('autosave.py')
         print("\nGoodbye. Your score is", sum(self.piles.values()))
@@ -391,8 +398,11 @@ moves = %r
         moves = loaded['moves']
         
         self.reset(players, multi, cards)
-        for m in moves:
-            self.turn(m)
+        # for m in moves:
+        #     self.turn(m)
+        ## was simpler, but infinity-looped when user made a mistake
+        while moves:
+            self.turn(moves)
         
 if __name__ == "__main__":
     # print ("Red 4 is:", Card(Color.Red, 4))
