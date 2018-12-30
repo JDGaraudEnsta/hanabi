@@ -29,7 +29,7 @@ test:
 clean:
 	cd doc && make clean
 	cd src && rm -rf build/ dist/ hanabi.egg-info/
-	cd test && rm -f *.log autosave.py
+	cd test && rm -f *.log autosave.py *~
 
 distclean: clean
 	-pip3 uninstall -y hanabi

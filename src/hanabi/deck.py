@@ -9,11 +9,8 @@ import readline  # this greatly improves `input`
 from enum import Enum          
 from enum import unique        
 
-# kludge so it works when installed or from localdir directly
-try:
-    from . import ascii_art
-except SystemError:
-    import ascii_art
+from . import ascii_art
+from . import ai
 
 # FIXME:
 # currently the game stops when the last card is picked (raise IndexError)
@@ -197,11 +194,16 @@ class Game:
         """
         Play one round: ask the player what she wants to do, then update the game.
         If _choice is not None, play it instead of asking.
+
+        Note: 
+        If provided, _choice has to be a list of actions, because I chose to
+        record invalid actions too (and these loop within this file).
         """
         print()
         print (self.current_player_name,
                "this is what you remember:",
-               self.current_hand.str_clue(),
+#               self.current_hand.str_clue(),
+               self.current_hand,
                "\n      this is what you see:     ",
                self.hands[(self.current_player+1)%2],
                "\n                                ",
@@ -213,6 +215,9 @@ class Game:
         (p)lay a card (12345)
         e(x)amine the piles""")
 
+        cheater = ai.Cheater()
+        cheater.play(self)
+        
         while True:
             if _choice is None:
                 choice = input("hanabi> ")
@@ -352,6 +357,10 @@ class Game:
         except Exception as e:
             print('Error:', e)
 
+    @property
+    def score(self):
+        return sum(self.piles.values())        
+        
     def run(self):
         try:
             last_players = list(self.players)
@@ -361,14 +370,18 @@ class Game:
                     print("--> Last turns:",
                           " ".join(last_players),
                           "may still play once.")
-                    last_players.remove(self.players[self.current_player])
+                    try:
+                        last_players.remove(self.players[self.current_player])
+                    except ValueError:
+                        pass  # if Alice 'x', she is removed but plays again
                 self.turn()
+                if self.score == 25: raise StopIteration("Perfect score!")
 #            print ("Game finished because deck exhausted")
         except (KeyboardInterrupt, EOFError, StopIteration) as e:
             print ('Game finished because of', e)
             pass
         self.save('autosave.py')
-        print("\nGoodbye. Your score is", sum(self.piles.values()))
+        print("\nGoodbye. Your score is", self.score)
 
     def save(self, filename):
         """Save starting deck and list of moves."""
