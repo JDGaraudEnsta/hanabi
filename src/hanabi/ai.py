@@ -61,7 +61,7 @@ class Cheater(AI):
             return "d%d"%discardable2[0]
         
 
-        
+        ## Look at precious cards in other hand, to clue them
         precious = [ card for card in
                      game.hands[game.other_player].cards
                      if (1+game.discard_pile.cards.count(card))
@@ -88,13 +88,33 @@ class Cheater(AI):
                     return clue
                 print ("... but there's no blue coin left!")
 
-        # if reach here, can't play, can't discard safely
-        # let's see if we can make a useful clue
-
+        
+        # if reach here, can't play, can't discard safely, no card to clue-save
+        # Let's give a random clue, to see if partner can unblock me
         if game.blue_coins >0:
             print ('Cheater would clue randomly: cW')
             return 'cw'
 
-        # fixme: smarter discard?
-        print('Cheater is trapped and must discard his oldest: d')
-        return 'd'
+        # If reach here, can't play, can't discard safely
+        # No blue-coin left.
+        # Must discard a card. Let's choose a non-precious one (preferably a 4)
+        mynotprecious = [ (card.number,i+1) for (i,card) in
+                          enumerate(game.current_hand.cards)
+                          if not (
+                                  (1+game.discard_pile.cards.count(card))
+                                  == game.deck.card_count[card.number])
+                     ]
+        mynotprecious.sort(key=lambda p: (-p[0], p[1]))
+        if mynotprecious:
+            act = 'd%d'%mynotprecious[0][1]
+            print('Cheater is trapped and must discard:', act, mynotprecious)
+            return act
+
+        # Oh boy, not even a safe discard, this is gonna hurt!
+        # it's a loss. Discard the biggest
+        myprecious = [ (card.number,i+1) for (i,card) in enumerate(game.current_hand.cards) ]
+        myprecious.sort(key=lambda p: (-p[0], p[1]))
+        act = 'd%d'%myprecious[0][1]
+        print('Cheater is doomed and must discard:', act, myprecious)
+        return act
+

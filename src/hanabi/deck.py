@@ -215,6 +215,8 @@ class Game:
         (p)lay a card (12345)
         e(x)amine the piles""")
 
+        ai.Cheater(self).play()
+        
         while True:
             if _choice is None:
                 choice = input("hanabi> ")
