@@ -1,5 +1,5 @@
 """
-Hanabi deck.
+Hanabi deck and game engine.
 """
 
 import copy
@@ -11,9 +11,6 @@ from enum import unique
 
 from . import ascii_art
 from . import ai
-
-# FIXME:
-# currently the game stops when the last card is picked (raise IndexError)
 
 
 @unique

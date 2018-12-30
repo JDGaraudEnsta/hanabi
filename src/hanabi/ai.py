@@ -2,10 +2,9 @@
 Artificial Intelligence to play Hanabi.
 """
 
-## Facto possible, si j'ai plus d'une IA:
 class AI:
     """
-    Some basic functions, game analysis.
+    AI base class: some basic functions, game analysis.
     """
     def __init__(self, game):
         self.game = game
@@ -53,7 +52,16 @@ class Cheater(AI):
             print ('Cheater would discard:', "d%d"%discardable[0], discardable)
             return "d%d"%discardable[0]
 
+        ## 2nd type of discard: I have a card, and my partner too
+        discardable2 = [ i+1 for (i,card) in enumerate(game.current_hand.cards)
+                         if card in game.hands[game.other_player].cards
+                       ]
+        if discardable2 and (game.blue_coins<8):
+            print ('Cheater would discard2:', "d%d"%discardable2[0], discardable2)
+            return "d%d"%discardable2[0]
+        
 
+        
         precious = [ card for card in
                      game.hands[game.other_player].cards
                      if (1+game.discard_pile.cards.count(card))
