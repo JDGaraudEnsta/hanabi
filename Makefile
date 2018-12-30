@@ -1,4 +1,4 @@
-.PHONY: help all module doc clean distclean uninstall list
+.PHONY: help all module doc test clean distclean uninstall list
 
 default: help
 
@@ -13,7 +13,7 @@ help:
 	@echo "         - clean, then remove the module"
 
 
-all: module doc
+all: module doc test
 
 
 module:
@@ -22,9 +22,14 @@ module:
 doc: README.html module
 	cd doc && make html
 
+test:
+	cd test && ./run_tests.sh
+	@echo All tests are ok
+
 clean:
 	cd doc && make clean
 	cd src && rm -rf build/ dist/ hanabi.egg-info/
+	cd test && rm -f *.log autosave.py
 
 distclean: clean
 	-pip3 uninstall -y hanabi
@@ -32,9 +37,6 @@ distclean: clean
 
 uninstall: distclean
 
-tests:
-	cd test && ./run_tests.sh
-	@echo All tests are ok
 
 %.html: %.md
 	pandoc -s --toc $< --css=./github-pandoc.css -o $@
