@@ -32,6 +32,10 @@ distclean: clean
 
 uninstall: distclean
 
+tests:
+	cd test && ./run_tests.sh
+	@echo All tests are ok
+
 %.html: %.md
 	pandoc -s --toc $< --css=./github-pandoc.css -o $@
 
