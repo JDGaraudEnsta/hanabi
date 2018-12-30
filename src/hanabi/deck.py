@@ -154,8 +154,9 @@ class Game:
             'p': self.play,
             'c': self.clue,
             'x': self.examine_piles,
-            '>': self.command,  # cheat-code !
             'l': self.load,
+            '>': self.command,  # cheat-code !
+            '?': (lambda x: print(ai.Cheater(self).play()))
         }
         self.reset()
 
@@ -189,6 +190,8 @@ class Game:
         self.blue_coins = 8
         self.red_coins = 0
 
+        self.ai = None
+
 
     def turn(self, _choice=None):
         """
@@ -215,13 +218,13 @@ class Game:
         (p)lay a card (12345)
         e(x)amine the piles""")
 
-        cheater = ai.Cheater()
-        cheater.play(self)
-        
         while True:
             if _choice is None:
                 choice = input("hanabi> ")
-                if choice.strip()=='': continue
+                if choice.strip()=='':
+                    continue
+            elif isinstance(_choice, ai.AI):
+                choice = _choice.play()
             else:
                 choice = _choice.pop(0)
                 print ('hanabi (auto)>', choice)
@@ -374,7 +377,7 @@ class Game:
                         last_players.remove(self.players[self.current_player])
                     except ValueError:
                         pass  # if Alice 'x', she is removed but plays again
-                self.turn()
+                self.turn(self.ai)
                 if self.score == 25: raise StopIteration("Perfect score!")
 #            print ("Game finished because deck exhausted")
         except (KeyboardInterrupt, EOFError, StopIteration) as e:

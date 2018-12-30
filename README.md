@@ -45,6 +45,11 @@ This will help designing a readable/usable code.
 * Write short report, documentation (e.g. sphinx), ...
 
 
+### Extra
+
+* Answer the question from the paper: what is the average score. Compare with the Cheater's score. Add divination for Cheater (she can see through the deck).
+
+
 
 ## Bibliography
 

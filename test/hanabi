@@ -1,10 +1,27 @@
 #!/usr/bin/env python3
 
 import hanabi
+import argparse
+
+
+parser = argparse.ArgumentParser(
+    description='Play a game of Hanabi.')
+
+
+parser.add_argument("-n", type=int, default=2,
+                    help='number of players')
+parser.add_argument("--ai", type=str, help='players are controlled by this AI')
+
+args = parser.parse_args()
+print(args)
 
 print ("\nLet's start a new game")
-game = hanabi.Game(2)
+game = hanabi.Game(args.n)
 print ("Here are the hands:")
 print (game.hands)
+
+if args.ai:
+    game.ai = getattr(hanabi.ai, args.ai)(game)
+    print("Playing with this ai:", game.ai.__doc__)
 
 game.run()

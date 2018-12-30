@@ -3,25 +3,15 @@ Artificial Intelligence to play Hanabi.
 """
 
 ## Facto possible, si j'ai plus d'une IA:
-# class AI:
-#     """
-#     Some basic functions, game analysis.
-#     """
-#     def __init__(self, game):
-#         self.game = game
+class AI:
+    """
+    Some basic functions, game analysis.
+    """
+    def __init__(self, game):
+        self.game = game
 
-#     @property
-#     def playable(self):
-#         "Playable cards, sorted by card number."
-#         playable = [ (i+1, card.number) for (i,card) in
-#                      enumerate(game.current_hand.cards)
-#                      if game.piles[card.color]+1 == card.number ]
 
-#         if playable:
-#             # sort by ascending number, then newest
-#             playable.sort(key=lambda p: (p[1], -p[0]))
-
-class Cheater:
+class Cheater(AI):
     """
     This player can see his own cards!
 
@@ -32,8 +22,9 @@ class Cheater:
       * if blue_coin<8: discard the largest one, except if it's the last of its kind or in chop position in his opponent.
     """
 
-    def play(self, game):
+    def play(self):
         "Return the best cheater action."
+        game = self.game
         playable = [ (i+1, card.number) for (i,card) in
                      enumerate(game.current_hand.cards)
                      if game.piles[card.color]+1 == card.number ]
@@ -80,14 +71,22 @@ class Cheater:
                 if p.color_clue is False:
                     clue = "c%s"%p.color
                     break
+                # this one was tricky:
+                # don't want to give twice the same clue
             if clue:
                 print ('Cheater would clue a precious:',
                        clue, precious)
-                return clue
-            # this one is tricky: don't want to give twice the same clue
+                if game.blue_coins>0:
+                    return clue
+                print ("... but there's no blue coin left!")
 
-            # if reach here, all precious cards are fully clued,
-            # let's do something more interesting...
-        
-        print ('Cheater would clue randomly: cW')
-        return 
+        # if reach here, can't play, can't discard safely
+        # let's see if we can make a useful clue
+
+        if game.blue_coins >0:
+            print ('Cheater would clue randomly: cW')
+            return 'cw'
+
+        # fixme: smarter discard?
+        print('Cheater is trapped and must discard his oldest: d')
+        return 'd'
