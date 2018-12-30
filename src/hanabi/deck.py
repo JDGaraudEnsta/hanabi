@@ -378,7 +378,7 @@ class Game:
                     except ValueError:
                         pass  # if Alice 'x', she is removed but plays again
                 self.turn(self.ai)
-                if self.score == 25: raise StopIteration("Perfect score!")
+                if self.score == 25: raise StopIteration("it is perfect!")
 #            print ("Game finished because deck exhausted")
         except (KeyboardInterrupt, EOFError, StopIteration) as e:
             print ('Game finished because of', e)
@@ -388,7 +388,7 @@ class Game:
         print("\nOne final glance at the table:")
         print(self.starting_deck)
         self.print_piles()
-        print("\nGoodbye. Your score is %d."%self.score)
+        print("\nGoodbye. Your score is %d"%self.score)
 
     def save(self, filename):
         """Save starting deck and list of moves."""

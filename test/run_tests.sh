@@ -1,7 +1,7 @@
 #!/bin/bash
 
 for f in game*.py; do
-    ./hanabi <<< ">self.load('$f')" |tee $f.log
+    hanabi <<< ">self.load('$f')" |tee $f.log
 done
 
 declare -A scores
