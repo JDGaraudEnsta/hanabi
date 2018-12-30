@@ -384,7 +384,11 @@ class Game:
             print ('Game finished because of', e)
             pass
         self.save('autosave.py')
-        print("\nGoodbye. Your score is", self.score)
+
+        print("\nOne final glance at the table:")
+        print(self.starting_deck)
+        self.print_piles()
+        print("\nGoodbye. Your score is %d."%self.score)
 
     def save(self, filename):
         """Save starting deck and list of moves."""

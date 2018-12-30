@@ -11,6 +11,7 @@ setup(
     name = "hanabi",
     version = "0.1.0",
     packages = find_packages("."),
+    scripts=['hanabi/hanabi'],
     author = "JD. Garaud",
     author_email = "jdgaraud@onera.fr",
     description = "Hanabi game: CLI, GUI and AI",
