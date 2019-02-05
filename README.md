@@ -55,17 +55,25 @@ This will help designing a readable/usable code.
 
 ### Other Hanabi projects
 
-* A C++ bot. Interesting because it gives some strategies and success rates: https://github.com/Quuxplusone/Hanabi
+* [A C++ bot: some strategies and success rates](https://github.com/Quuxplusone/Hanabi)
+* [HanSim: the Hat guessing strategy](https://d0474d97-a-62cb3a1a-s-sites.googlegroups.com/site/rmgpgrwc/research-papers/Hanabi_final.pdf?attachauth=ANoY7cp_mjjD7lCb5HFxBphRWpSkE8SabM7PiOVWFwcNKSnpxENRLwTsQEgDMC6PIHuBmzP4oixvH_B8PZQmrHDyfA-ZLSKWb-Lx1WJNIUKUoxV1w0K0bWXelLPCi5MbXaByoVcukH4CEg-5N_iJP7mKSDHiV5ImwGDBCwQoT4mwvppVyA0BVb2Lhr-mGYFtUw3uBlds77azk5RjFZHGvAtvx6idYLvunLLj6BStHWHrNovX8p5KGFk%3D&attredirects=0)
+* [HanSim: source code](https://github.com/rjtobin/HanSim)
+* [boardgame arena](https://fr.boardgamearena.com/#!gamepanel?game=hanabi)
+* [hanabi conventions (hanabi-live)](https://github.com/Zamiell/hanabi-conventions), and references therein.
 
-* A paper: https://d0474d97-a-62cb3a1a-s-sites.googlegroups.com/site/rmgpgrwc/research-papers/Hanabi_final.pdf?attachauth=ANoY7cp_mjjD7lCb5HFxBphRWpSkE8SabM7PiOVWFwcNKSnpxENRLwTsQEgDMC6PIHuBmzP4oixvH_B8PZQmrHDyfA-ZLSKWb-Lx1WJNIUKUoxV1w0K0bWXelLPCi5MbXaByoVcukH4CEg-5N_iJP7mKSDHiV5ImwGDBCwQoT4mwvppVyA0BVb2Lhr-mGYFtUw3uBlds77azk5RjFZHGvAtvx6idYLvunLLj6BStHWHrNovX8p5KGFk%3D&attredirects=0
 
-* and its implementation: https://github.com/rjtobin/HanSim
+### AI
 
-* https://fr.boardgamearena.com/#!gamepanel?game=hanabi
+* [deepmind: Atari](https://arxiv.org/pdf/1312.5602v1.pdf)
+* [deepmind: SC2](https://arxiv.org/abs/1708.04782)
+* [deepmind: Hanabi](https://arxiv.org/abs/1902.00506)
+* todo: find non-deepmind references?
 
-### Background ideas
 
-* https://en.wikipedia.org/wiki/KISS_principle
-* http://www.catb.org/esr/writings/taoup/
-* http://www.catb.org/esr/writings/cathedral-bazaar/
-* https://en.wikipedia.org/wiki/Rubber_duck_debugging
+
+### Misc (coding principles, project, ...)
+
+* [keep it simple](https://en.wikipedia.org/wiki/KISS_principle)
+* [rule of least surprise](http://www.catb.org/esr/writings/taoup/), [catbaz](http://www.catb.org/esr/writings/cathedral-bazaar/)
+* [rubber duck debugging](https://en.wikipedia.org/wiki/Rubber_duck_debugging)
+* [markdown](https://guides.github.com/features/mastering-markdown/)
