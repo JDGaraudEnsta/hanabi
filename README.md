@@ -77,3 +77,4 @@ This will help designing a readable/usable code.
 * [rule of least surprise](http://www.catb.org/esr/writings/taoup/), [catbaz](http://www.catb.org/esr/writings/cathedral-bazaar/)
 * [rubber duck debugging](https://en.wikipedia.org/wiki/Rubber_duck_debugging)
 * [markdown](https://guides.github.com/features/mastering-markdown/)
+* [BGA state machine](https://www.slideshare.net/boardgamearena/bga-studio-focus-on-bga-game-state-machine)
