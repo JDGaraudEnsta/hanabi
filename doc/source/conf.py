@@ -32,6 +32,7 @@
 # ones.
 extensions = [
     'sphinx.ext.autodoc',
+    'sphinx.ext.autosummary',
     'sphinx.ext.todo',
     'sphinx.ext.imgmath',
     'sphinx.ext.viewcode',
@@ -135,6 +136,9 @@ cloud
 import random
 random.shuffle(_html_themes)
 html_theme = _html_themes.pop()
+
+# in the end, my favorite:
+html_theme = 'nature'
 
 # cloud comes from `apt-get install python3-cloud-sptheme`
 print ("Theme is: ", html_theme)

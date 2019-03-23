@@ -28,6 +28,13 @@ Module reference
 
 .. currentmodule:: hanabi
 
+.. autosummary::
+
+   hanabi.deck
+   hanabi.ai
+
+
+
 hanabi.deck
 -----------
 
@@ -36,6 +43,13 @@ hanabi.deck
    :undoc-members:
                    
    
+hanabi.ai
+---------
+
+.. automodule:: hanabi.ai
+   :members:
+   :undoc-members:
+                   
 
 
 Indices and tables
