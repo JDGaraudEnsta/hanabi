@@ -2,53 +2,66 @@
 
 A python3 module that knows Hanabi:
 
-* card deck and dealer
-* CLI, verify that your moves are allowed
-* GUI
-* AI
+* card deck and dealer,
+* CLI (command line interface), lets you play and verifies that your moves are allowed (currently limited to 2 players),
+* GUI (to do),
+* AI (currently only one, and it is cheating).
+
 
 
 ## Tasks
 
-This project is for 3 to 4 students:
+There are many possible tasks:
 
-* Aisha is in charge of the AI.
-* Cliona is in charge of the main module and command-line interface.
-* Electra is the free-electron: project manager, superviser, end-user, tester, debugger.
-* Guido is in charge of the GUI.
+- read the current state of the module, 
+  - complete its documentation when needed,
+  - share with everyone this improvement,
 
-Make sure you discuss a lot, and share information. 
-This will help designing a readable/usable code.
+- improve the CheaterAI
+  -- answer the question (still an open question afaik) what is the best possible score, statistically speaking.
 
+- add AIs. Some suggestions:
+  - RandomAI (plays randomly)
+  - DirectAI (plays whatever is hinted)
+  - BGAAI (plays Board Game Arena's standard)
+  - HansimAI (see below)
+  - train a machine learning (I'm not sure if this will give anything interesting without powerful CPU/GPU resources)
+  - design your own, from scratch or by improving another
 
-### Week 1
-
-* Electra: fast-prototype the module's interface, keeping in mind the 3 use-cases: command-line, GUI and AI auto-play. Very quickly, we'll want a "replay" feature, for debugging: design a way to do this.
-* Cliona: program the module and a CLI (keep it simple).
-* Aisha: read the article, design you own idea, summarize the algorithm(s). Write 1 or 2 algorithms (will help the design of module's interface).
-* Guido: try a simple GUI (PySide), start experimenting, prepare canvas.
-
-
-### Week 2
-
-* Stabilize the module: because from now on all devels will have to use it.
-
-* Guido: make an usable GUI
-* Aisha: Implement the random-AI and cheater-AI
-* Cliona and Electra: play a few games. Design a way to replay games (test-suite). Keep track of score, so that Aisha has someone to compete against.
-
-### Week 3
-
-* Test, experiment, put in production.
-* Everyone designs a more advanced AI.
-* Someone can take care of 3-5 players.
-* Write short report, documentation (e.g. sphinx), ...
+Keep track of scores for all these games/AI. 
+We will want to compare: different AIs on a same deck, or a given AI over a 1000 decks. 
+We will need to see why a certain AI fails on a certain game.
 
 
-### Extra
+- make it workable for up to 5 players.
 
-* Answer the question from the paper: what is the average score. Compare with the Cheater's score. Add divination for Cheater (she can see through the deck).
+- make it workable from two separate screens (network?)
 
+
+During the project:
+  - make sure you understand the "replay" mode
+  - add tests (UnitTest or whole tests)
+  - keep notes on your questions, decisions, discussions (github's wiki)
+
+
+You may also design a GUI, but be warned that this is a very time-consuming task.
+I like PySide2. Tkinter is more portable but harder to learn imho. 
+
+
+
+## Installation
+
+
+    git clone https://github.com/JDGaraudEnsta/hanabi
+    cd hanabi
+    make        # pip installs it in the default directory ~/.local
+    hanabi
+    # and now you may play
+
+
+If `hanabi` doesn't start (`bash: hanabi: command not found`), add this to your `~/.bashrc`:
+
+    export PATH=$HOME/.local/bin:$PATH
 
 
 ## Bibliography
