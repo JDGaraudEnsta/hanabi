@@ -1,5 +1,10 @@
 # Hanabi project
 
+This project is for educational purposes: 
+its current status should represent the student's starting point.
+
+# Hanabi module
+
 A python3 module that knows Hanabi:
 
 * card deck and dealer,

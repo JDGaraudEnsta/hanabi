@@ -39,7 +39,7 @@ uninstall: distclean
 
 
 %.html: %.md
-	pandoc -s --toc $< --css=./github-pandoc.css -o $@
+	pandoc -s --toc $< --css=./doc/github-pandoc.css -o $@
 
 # Funny rule, that lists all available targets
 list:
