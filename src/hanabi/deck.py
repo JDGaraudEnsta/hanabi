@@ -196,26 +196,30 @@ class Game:
         If _choice is not None, play it instead of asking.
 
         Note:
-        If provided, _choice has to be a list of actions, because I chose to
-        record invalid actions too (and these loop within this file).
+        If provided, _choice can be:
+           - None: the human will be prompted
+           - a (str), which is played
+           - an AI object (we will play what its function play() suggests)
+           - a list of actions, because I chose to
+             record invalid actions too (and these loop within this file).
         """
         print()
         print (self.current_player_name,
                "this is what you remember:",
-#               self.current_hand.str_clue(),
-               self.current_hand,
+               self.current_hand.str_clue(),
+#               self.current_hand,
                "\n      this is what you see:     ",
                self.hands[(self.current_player+1)%2],
                "\n                                ",
                self.hands[(self.current_player+1)%2].str_clue(),
         )
         print("""What do you want to play?
-        (d)iscard a card (12345) 
+        (d)iscard a card (12345)
         give a (c)lue (RBGWY 12345)
         (p)lay a card (12345)
         e(x)amine the piles""")
 
-        ai.Cheater(self).play()
+        #ai.Cheater(self).play()
 
         while True:
             if _choice is None:
@@ -224,7 +228,9 @@ class Game:
                     continue
             elif isinstance(_choice, ai.AI):
                 choice = _choice.play()
-            else:
+            elif isinstance(_choice, str):
+                pass
+            else: # assume it is a list
                 choice = _choice.pop(0)
                 print ('hanabi (auto)>', choice)
             # so here, choice is a 2 or 3 letters code:

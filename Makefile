@@ -4,7 +4,7 @@ default: help
 
 help:
 	@echo "Available targets:"
-	@echo "  module - build and install hanabi python3 module"
+	@echo "  module, install - build and install hanabi python3 module"
 	@echo "  doc    - build the module's documentation"
 	@echo "  test   - run the non-regression and validation tests"
 	@echo "  all    - do all 3 previous targets"
@@ -18,6 +18,7 @@ all: module doc test
 
 module:
 	cd src && python3 setup.py install --user
+install: module
 
 doc: README.html module
 	cd doc && make html
