@@ -33,6 +33,12 @@ There's a third task for the group of 3: redefine the API of `Game`, so an AI ma
 It is not yet clear whether a `CheatWarning` should be raised, or if the API should prefix the function names, or yet something else. Once done, we will discuss it all together.
 
 
+## Further reading: coverage
+
+    pip3 install --user coverage
+    coverage run ./hanabi_unittest.py
+    coverage report -m |sed 's/auto.*egg//'
+
 
 ## Git workflow
 
