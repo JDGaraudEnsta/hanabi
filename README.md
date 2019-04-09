@@ -94,5 +94,5 @@ If `hanabi` doesn't start (`bash: hanabi: command not found`), add this to your 
 * [keep it simple](https://en.wikipedia.org/wiki/KISS_principle)
 * [rule of least surprise](http://www.catb.org/esr/writings/taoup/), [catbaz](http://www.catb.org/esr/writings/cathedral-bazaar/)
 * [rubber duck debugging](https://en.wikipedia.org/wiki/Rubber_duck_debugging)
-* [markdown](https://guides.github.com/features/mastering-markdown/)
+* [markdown (overview)](https://guides.github.com/features/mastering-markdown/), [markdown (in details)](https://github.github.com/gfm/)
 * [BGA state machine](https://www.slideshare.net/boardgamearena/bga-studio-focus-on-bga-game-state-machine)
