@@ -29,14 +29,14 @@ Today's work is twofold:
 Since you are in groups of two, work in parallel on each task, and _discuss_ on design choices every ~15 minutes.
 
 
-There's a third task for the group of 3: redefine the API of `Game`, so an AI may not cheat by accident. In other words, identify properly the "public" functions and attributes of the `Game` class. 
+There's a third task for the group of 3: redefine the API of `Game`, so an AI may not cheat by accident. In other words, identify properly the "public" functions and attributes of the `Game` class.
 It is not yet clear whether a `CheatWarning` should be raised, or if the API should prefix the function names, or yet something else. Once done, we will discuss it all together.
 
 
 
 ## Git workflow
 
-Make sure you work in a fork: a `git remove -v` should display both `origin` (your version) and `upstream` (my version), a bit like this:
+Make sure you work in a fork: a `git remote -v` should display both `origin` (your version) and `upstream` (my version), a bit like this:
 
     origin  	git@github.com:your_login/your_hanabi.git (fetch)
     origin  	git@github.com:your_login/your_hanabi.git (push)
