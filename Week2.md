@@ -50,6 +50,16 @@ Make sure you work in a fork: a `git remote -v` should display both `origin` (yo
     upstream	git@github.com:JDGaraudEnsta/hanabi.git (push)
 
 
+[Sync fork with upstream from browser](https://github.com/KirstieJane/STEMMRoleModels/wiki/Syncing-your-fork-to-the-original-repository-via-the-browser)
+
+Or to sync fork from upstream from the command-line (NEEDS VERIFICATION!):
+
+    # only the integrator needs to do this
+    git status # if modif, commit them first!
+    git pull upstream master
+    git commit -a -m "Sync fork with upstream"
+    git push origin master
+
 
 Some discussion topics:
 
@@ -60,5 +70,5 @@ Some discussion topics:
 
 ## Documentation
 
-`make doc` should work. 
+`make doc` should work.
 If not, `pip3 install --user python3-sphinx`.
