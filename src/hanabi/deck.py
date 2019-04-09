@@ -6,8 +6,8 @@ import copy
 import random
 import readline  # this greatly improves `input`
 
-from enum import Enum          
-from enum import unique        
+from enum import Enum
+from enum import unique
 
 from . import ascii_art
 from . import ai
@@ -50,7 +50,7 @@ class Card:
         return (str(self.color)[0] + str(self.number))
     def __repr__(self):
         return ("Card(%r, %d)"%(self.color, self.number))
-        
+
     def str_color(self):
         "Colorized string for this card."
         return self.color.colorize(str(self))
@@ -61,7 +61,7 @@ class Card:
 
     def str_clue(self):
         "What I know about this card."
-        return (self.color_clue or '*') + (self.number_clue or '*') 
+        return (self.color_clue or '*') + (self.number_clue or '*')
 
 
 class Hand:
@@ -73,7 +73,7 @@ class Hand:
         self.cards = []
         for i in range(n):
             self.cards.append(deck.draw())
-        self._deck = deck  # not sure if I need it 
+        self._deck = deck  # not sure if I need it
 
     def __str__(self):
         return " ".join([c.str_color() for c in self.cards])
@@ -96,7 +96,7 @@ class Hand:
 
     def append(self, c): self.cards.append(c)
     def sort(self): self.cards.sort(key=str)
-    
+
     def __len__(self): return len(self.cards)
 
 
@@ -114,7 +114,7 @@ class Deck:
                         self.cards.append(Card(color, number))
         else:
             self.cards = cards
-        
+
     def __str__(self):
         return " ".join([c.str_color() for c in self.cards])
 
@@ -126,11 +126,11 @@ class Deck:
 
     def shuffle(self):
         random.shuffle(self.cards)
-    
+
     def draw(self):
         "Draw a card from the deck."
         return self.cards.pop(0)
-        
+
     def deal(self, nhands):
         "Deal n hands and return them."
         hands = []
@@ -195,28 +195,32 @@ class Game:
         Play one round: ask the player what she wants to do, then update the game.
         If _choice is not None, play it instead of asking.
 
-        Note: 
-        If provided, _choice has to be a list of actions, because I chose to
-        record invalid actions too (and these loop within this file).
+        Note:
+        If provided, _choice can be:
+           - None: the human will be prompted
+           - a (str), which is played
+           - an AI object (we will play what its function play() suggests)
+           - a list of actions, because I chose to
+             record invalid actions too (and these loop within this file).
         """
         print()
         print (self.current_player_name,
                "this is what you remember:",
-#               self.current_hand.str_clue(),
-               self.current_hand,
+               self.current_hand.str_clue(),
+#               self.current_hand,
                "\n      this is what you see:     ",
                self.hands[(self.current_player+1)%2],
                "\n                                ",
                self.hands[(self.current_player+1)%2].str_clue(),
         )
         print("""What do you want to play?
-        (d)iscard a card (12345) 
+        (d)iscard a card (12345)
         give a (c)lue (RBGWY 12345)
         (p)lay a card (12345)
         e(x)amine the piles""")
 
-        ai.Cheater(self).play()
-        
+        #ai.Cheater(self).play()
+
         while True:
             if _choice is None:
                 choice = input("hanabi> ")
@@ -224,14 +228,16 @@ class Game:
                     continue
             elif isinstance(_choice, ai.AI):
                 choice = _choice.play()
-            else:
+            elif isinstance(_choice, str):
+                pass
+            else: # assume it is a list
                 choice = _choice.pop(0)
                 print ('hanabi (auto)>', choice)
             # so here, choice is a 2 or 3 letters code:
             #  d2 (discard 2nd card)
             #  cR (give Red clue) ... will become cRA (give Red to Alice)
             #  p5 (play 5th card)
-            
+
             self.moves.append(choice)
             try:
                 self.actions[choice[0]](choice[1:])
@@ -240,7 +246,7 @@ class Game:
                 print (e, "is not a valid action. Try again.")
             except (ValueError, IndexError) as e:
                 print (e, "Try again")
-        
+
     def add_blue_coin(self):
         if self.blue_coins == 8:
             raise ValueError("Already 8 blue coins. Can't get an extra one.")
@@ -256,7 +262,7 @@ class Game:
             # StopIteration will stop the main loop!
             raise StopIteration()
 
-         
+
     def discard(self, index):
         "Action: Discard the given card from current hand (the first if index is an empty string)."
         try:
@@ -274,7 +280,7 @@ class Game:
         print (self.current_player_name, "discards", card.str_color(),
                "and now we have %d blue coins."%self.blue_coins)
         self.next_player()
-        
+
     def play(self, index):
         "Action: play the given card."
         icard = int(index)
@@ -299,14 +305,14 @@ class Game:
             self.add_red_coin()
         self.print_piles()
         self.next_player()
-        
+
     def clue(self, clue):
         "Action: give a clue."
         hint = clue[0].upper()  # so cr is valid to clue Red
         if not hint in "12345RBGWY":
             raise ValueError("%s is not a valid clue."%hint)
         self.remove_blue_coin() # will raise if no blue coin left
-        
+
         print (self.current_player_name, "gives a clue:", hint)
         #  player = clue[1]  # if >=3 players
         for card in self.hands[self.other_player].cards:
@@ -334,8 +340,8 @@ class Game:
         print ("     Coins:", self.blue_coins, "blue,", self.red_coins, "red")
     def print_piles(self):
         self._color_print_piles()
-        
-        
+
+
     def next_player(self):
         "Switch to next player."
         try:
@@ -350,7 +356,7 @@ class Game:
 
         # other nice ideas: https://stackoverflow.com/questions/23416381/circular-list-iterator-in-python
         # itertools.cycle or players.append(pop(0))
-        
+
     def command(self, args):
         "Action: Run a python command from Hanabi (yes, it is a cheat code: self is the current Game)."
         print('About to run `%s`'%args)
@@ -361,8 +367,8 @@ class Game:
 
     @property
     def score(self):
-        return sum(self.piles.values())        
-        
+        return sum(self.piles.values())
+
     def run(self):
         try:
             last_players = list(self.players)
@@ -420,14 +426,14 @@ moves = %r
         players = loaded['players']
         cards = loaded['cards']
         moves = loaded['moves']
-        
+
         self.reset(players, multi, cards)
         # for m in moves:
         #     self.turn(m)
         ## was simpler, but infinity-looped when user made a mistake
         while moves:
             self.turn(moves)
-        
+
 if __name__ == "__main__":
     # print ("Red 4 is:", Card(Color.Red, 4))
 
@@ -435,20 +441,20 @@ if __name__ == "__main__":
     # print("Unshuffled:", deck)
     # deck.shuffle()
     # print("Shuffled:", deck)
-    
+
     # hands = deck.deal(5)
     # alice, benji, clara, devon, elric = hands
     # players = {0:"Alice", 1: "Benji", 2:"Clara", 3:"Dante", 4:"Elric"}
     # for i, h in enumerate(hands): print("%s's hand is %s"%(players[i], h))
 
     # print ("Is B1 in Alice's hand?", "B1" in alice.cards)
-    
+
     # try:
     #     card = alice.pop(1)
     #     print("Alice plays", card)
     # except ValueError:
     #     print("Alice can't play her 1st card")
-        
+
     print ("\nLet's start a new game")
     game = Game(2)
     print ("Here are the hands:")
