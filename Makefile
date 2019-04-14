@@ -5,12 +5,11 @@ default: help
 help:
 	@echo "Available targets:"
 	@echo "  module, install - build and install hanabi python3 module"
-	@echo "  doc    - build the module's documentation"
-	@echo "  test   - run the non-regression and validation tests"
-	@echo "  all    - do all 3 previous targets"
-	@echo "  clean  - remove compilation residual files"
-	@echo "  distclean, uninstall"
-	@echo "         - clean, then remove the module"
+	@echo "  doc             - build the module's documentation"
+	@echo "  test            - run the non-regression and validation tests"
+	@echo "  all             - do all 3 previous targets"
+	@echo "  clean           - remove compilation residual files"
+	@echo "  distclean, uninstall - clean, then remove the module"
 
 
 all: module doc test
