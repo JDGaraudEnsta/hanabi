@@ -29,20 +29,36 @@ Today's work is twofold:
 Since you are in groups of two, work in parallel on each task, and _discuss_ on design choices every ~15 minutes.
 
 
-There's a third task for the group of 3: redefine the API of `Game`, so an AI may not cheat by accident. In other words, identify properly the "public" functions and attributes of the `Game` class. 
+There's a third task for the group of 3: redefine the API of `Game`, so an AI may not cheat by accident. In other words, identify properly the "public" functions and attributes of the `Game` class.
 It is not yet clear whether a `CheatWarning` should be raised, or if the API should prefix the function names, or yet something else. Once done, we will discuss it all together.
 
+
+## Further reading: coverage
+
+    pip3 install --user coverage
+    coverage run ./hanabi_unittest.py
+    coverage report -m |sed 's/auto.*egg//'
 
 
 ## Git workflow
 
-Make sure you work in a fork: a `git remove -v` should display both `origin` (your version) and `upstream` (my version), a bit like this:
+Make sure you work in a fork: a `git remote -v` should display both `origin` (your version) and `upstream` (my version), a bit like this:
 
     origin  	git@github.com:your_login/your_hanabi.git (fetch)
     origin  	git@github.com:your_login/your_hanabi.git (push)
     upstream	git@github.com:JDGaraudEnsta/hanabi.git (fetch)
     upstream	git@github.com:JDGaraudEnsta/hanabi.git (push)
 
+
+[Sync fork with upstream from browser](https://github.com/KirstieJane/STEMMRoleModels/wiki/Syncing-your-fork-to-the-original-repository-via-the-browser)
+
+Or to sync fork from upstream from the command-line (NEEDS VERIFICATION!):
+
+    # only the integrator needs to do this
+    git status # if modif, commit them first!
+    git pull upstream master
+    git commit -a -m "Sync fork with upstream"
+    git push origin master
 
 
 Some discussion topics:
@@ -54,5 +70,5 @@ Some discussion topics:
 
 ## Documentation
 
-`make doc` should work. 
+`make doc` should work.
 If not, `pip3 install --user python3-sphinx`.
