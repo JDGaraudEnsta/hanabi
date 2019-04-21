@@ -38,8 +38,8 @@ class Color(Enum):
 
 
 class Card:
+    "A hanabi card."
     def __init__(self, color=None, number=None):
-        "A hanabi card."
         assert (1 <= number <= 5), "Wrong number"
         self.color = color
         self.number = number
@@ -65,10 +65,10 @@ class Card:
 
 
 class Hand:
+    """A Hanabi hand, with n cards, drawn from the deck.
+    Also used for the discard pile.
+    """
     def __init__(self, deck, n=5):
-        """A Hanabi hand, with n cards, drawn from the deck.
-        Also used for the discard pile.
-        """
         #TODO: see if it's easier to derive from list
         self.cards = []
         for i in range(n):
@@ -105,6 +105,7 @@ class Deck:
     card_count = {1:3, 2:2, 3:2, 4:2, 5:1 }
     # Rules for dealing:
     cards_by_player = { 2:5, 3:5, 4:4, 5:4 }
+
     def __init__(self, cards=None):
         if cards is None:
             self.cards = []
@@ -140,9 +141,25 @@ class Deck:
 
 
 class Game:
+    """A game of Hanabi.
+
+    Usage:
+
+        >>> import hanabi
+        >>> game = hanabi.Game(players=2)
+        >>> # without AI, the user is prompted:
+        >>> game.turn()   # just one round
+        >>> game.run()    # or a whole game
+        >>> 
+        >>> # if an AI is set, it will play the game:
+        >>> ai = hanabi.ai.Cheater(game)
+        >>> game.turn(ai)
+        >>> game.ai = ai
+        >>> game.run()
+    """
+
     Players = ("Alice", "Benji", "Clara", "Dante", "Elric")
     def __init__(self, players=2, multi=False):
-        "A game of Hanabi."
 
         # Actions are functions that a player may do.
         # They should finish by a call to next_player, if needed.
@@ -173,13 +190,14 @@ class Game:
 
         # record deck and moves, for replay
         self.moves = []
+        
         self.starting_deck = copy.deepcopy(self.deck)
 
         self.hands = self.deck.deal(len(self.players))
 
         self.current_player = None
         self.next_player()
-        self.last_player = None  # will be set the the last player, to allow last turn
+        self.last_player = None  # will be set to the last player, to allow last turn
 
         self.discard_pile = Hand(None, 0)  #  I don't give it the deck, so it can't draw accidentaly a card
         self.piles = dict(zip(list(Color), [0]*len(Color)))
