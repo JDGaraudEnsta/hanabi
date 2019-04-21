@@ -342,6 +342,9 @@ class Game:
                 target_index = short_names.index(target_index)
         except IndexError:
             target_index = 1
+        target_index = int(target_index)
+        if target_index == 0:
+            raise ValueError("Cannot give a clue to yourself.")
 
         target_name = self.players[target_index]
 
