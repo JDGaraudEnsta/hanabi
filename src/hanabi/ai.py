@@ -82,6 +82,7 @@ class Cheater(AI):
                     break
                 if p.color_clue is False:
                     clue = "c%s"%p.color
+                    clue = clue[:2]   # quick fix, with 3+ players, can't clue cRed anymore, only cR
                     break
                 # this one was tricky:
                 # don't want to give twice the same clue
