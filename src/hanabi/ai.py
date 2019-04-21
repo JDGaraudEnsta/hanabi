@@ -53,8 +53,12 @@ class Cheater(AI):
             return "d%d"%discardable[0]
 
         ## 2nd type of discard: I have a card, and my partner too
+        other_hands = game.hands[1:]
+        other_players_cards = sum([x.cards for x in other_hands], [])  # concatenate all hands into one big list
+        # could also itertools.chain ... maybe more readable
+        
         discardable2 = [ i+1 for (i,card) in enumerate(game.current_hand.cards)
-                         if card in game.hands[game.other_player].cards
+                         if card in other_players_cards
                        ]
         if discardable2 and (game.blue_coins<8):
             print ('Cheater would discard2:', "d%d"%discardable2[0], discardable2)
@@ -63,7 +67,7 @@ class Cheater(AI):
 
         ## Look at precious cards in other hand, to clue them
         precious = [ card for card in
-                     game.hands[game.other_player].cards
+                     other_players_cards
                      if (1+game.discard_pile.cards.count(card))
                          == game.deck.card_count[card.number]
                    ]

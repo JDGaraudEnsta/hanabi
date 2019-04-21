@@ -158,7 +158,7 @@ class Game:
         >>> game.run()
     """
 
-    Players = ("Alice", "Benji", "Clara", "Dante", "Elric")
+    Players = ["Alice", "Benji", "Clara", "Dante", "Elric"]
     def __init__(self, players=2, multi=False):
 
         # Actions are functions that a player may do.
@@ -186,11 +186,8 @@ class Game:
         if cards is None:
             self.deck.shuffle()
 
-        # print (self.deck)
-
-        # record deck and moves, for replay
+        # record starting deck and moves, for replay
         self.moves = []
-        
         self.starting_deck = copy.deepcopy(self.deck)
 
         self.hands = self.deck.deal(len(self.players))
@@ -227,11 +224,11 @@ class Game:
                "this is what you remember:",
                self.current_hand.str_clue(),
 #               self.current_hand,
-               "\n      this is what you see:     ",
-               self.hands[(self.current_player+1)%2],
-               "\n                                ",
-               self.hands[(self.current_player+1)%2].str_clue(),
-        )
+               "\n      this is what you see:")
+        for player, hand in zip(self.players[1:], self.hands[1:]):
+            print("%32s"%player, hand)
+            print(" "*32, hand.str_clue())
+        
         print("""What do you want to play?
         (d)iscard a card (12345)
         give a (c)lue (RBGWY 12345)
@@ -326,15 +323,31 @@ class Game:
         self.next_player()
 
     def clue(self, clue):
-        "Action: give a clue."
+        """Action: give a clue.
+        
+        clue[0] is within (12345RBGWY).
+        By default, the clue is given to the next player (backwards compatibility with 2 payers games).
+        If clue[1] is give it is the initial (ABCDE) or index (1234) oof the target player.
+        """
+
         hint = clue[0].upper()  # so cr is valid to clue Red
         if not hint in "12345RBGWY":
             raise ValueError("%s is not a valid clue."%hint)
         self.remove_blue_coin() # will raise if no blue coin left
 
-        print (self.current_player_name, "gives a clue:", hint)
+        try:
+            target_index = clue[1]
+            if target_index in 'ABCDE':
+                short_names = [ name[0] for name in self.players ]
+                target_index = short_names.index(target_index)
+        except IndexError:
+            target_index = 1
+
+        target_name = self.players[target_index]
+
+        print (self.current_player_name, "gives a clue", hint, "to", target_name)
         #  player = clue[1]  # if >=3 players
-        for card in self.hands[self.other_player].cards:
+        for card in self.hands[target_index].cards:
             if hint in str(card):
                 if hint in "12345":
                     card.number_clue = hint
@@ -362,13 +375,19 @@ class Game:
 
 
     def next_player(self):
-        "Switch to next player."
-        try:
-            self.other_player = self.current_player
-            self.current_player = (self.current_player+1)%len(self.players)
-        except TypeError:  # triggered when self.current_player=None
+        """Switch to next player.
+
+        Player 0 is *always* the current_player
+        """
+
+        if self.current_player is None:   # called at game setup
+            # I keep these two constants for the moment:
             self.current_player = 0
             self.other_player = 1
+        else:
+            # rotate players and hands
+            self.hands.append(self.hands.pop(0))
+            self.players.append(self.players.pop(0))
 
         self.current_player_name = '\033[1m%s\033[0m'%self.players[self.current_player]
         self.current_hand = self.hands[self.current_player]
@@ -383,6 +402,7 @@ class Game:
             exec(args)
         except Exception as e:
             print('Error:', e)
+            #raise
 
     @property
     def score(self):
@@ -442,7 +462,7 @@ moves = %r
 
         print ('Loaded:', loaded)
         multi = False
-        players = loaded['players']
+        players = list(loaded['players'])
         cards = loaded['cards']
         moves = loaded['moves']
 
