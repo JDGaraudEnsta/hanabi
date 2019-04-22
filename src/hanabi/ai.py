@@ -2,6 +2,8 @@
 Artificial Intelligence to play Hanabi.
 """
 
+import itertools
+
 class AI:
     """
     AI base class: some basic functions, game analysis.
@@ -9,7 +11,18 @@ class AI:
     def __init__(self, game):
         self.game = game
 
+    @property
+    def other_hands(self):
+        "The list of other players' hands."
+        return self.game.hands[1:]
 
+    @property
+    def other_players_cards(self):
+        "All of other players's cards, concatenated in a single list."
+        #return sum([x.cards for x in self.other_hands], [])
+        return list(itertools.chain.from_iterable([hand.cards for hand in self.other_hands]))
+
+        
 class Cheater(AI):
     """
     This player can see his own cards!
@@ -53,12 +66,9 @@ class Cheater(AI):
             return "d%d"%discardable[0]
 
         ## 2nd type of discard: I have a card, and my partner too
-        other_hands = game.hands[1:]
-        other_players_cards = sum([x.cards for x in other_hands], [])  # concatenate all hands into one big list
-        # could also itertools.chain ... maybe more readable
         
         discardable2 = [ i+1 for (i,card) in enumerate(game.current_hand.cards)
-                         if card in other_players_cards
+                         if card in self.other_players_cards
                        ]
         if discardable2 and (game.blue_coins<8):
             print ('Cheater would discard2:', "d%d"%discardable2[0], discardable2)
@@ -67,7 +77,7 @@ class Cheater(AI):
 
         ## Look at precious cards in other hand, to clue them
         precious = [ card for card in
-                     other_players_cards
+                     self.other_players_cards
                      if (1+game.discard_pile.cards.count(card))
                          == game.deck.card_count[card.number]
                    ]
