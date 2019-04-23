@@ -27,7 +27,9 @@ class CardTest(unittest.TestCase):
         self.assertEqual(c1,string_card)
 
     def test_number(self):
-        self.assertRaises(hanabi.deck.Card('R',7), AssertionError)
+        #self.assertRaises(hanabi.deck.Card('R',7), AssertionError)
+        with self.assertRaises(AssertionError):
+            hanabi.deck.Card('R',7)
 
 class HandTest(unittest.TestCase):
     # test __special__ functions
