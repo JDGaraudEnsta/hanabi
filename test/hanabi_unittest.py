@@ -4,8 +4,15 @@ import hanabi
 
 
 class ColorTest(unittest.TestCase):
-    def test_1(self):
-        pass
+    def test_str(self):
+        colors=[(31,"Red"),(32,"Green"),(34,"Blue"),(33,"Yellow"),(37,"White")]
+        trouve=True
+        for (c,color) in colors:
+            a=str(hanabi.deck.Color(c))
+            self.assertEqual(a,color)
+    def test_valid(self):
+        for s in (54,78,46,54,-5,3):
+            self.assertRaises(ValueError, hanabi.deck.Color, s)
 
 
 class CardTest(unittest.TestCase):
