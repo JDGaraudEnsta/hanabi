@@ -16,9 +16,18 @@ class ColorTest(unittest.TestCase):
 
 
 class CardTest(unittest.TestCase):
-    def test_1(self):
-        pass
+    def test_not_equaled_cards(self):
+        c1=hanabi.deck.Card('B',4)
+        c2=hanabi.deck.Card('R',4)
+        self.assertNotEqual(c1,c2)
 
+    def test_equal(self):
+        c1=hanabi.deck.Card('R',4)
+        string_card="R4"
+        self.assertEqual(c1,string_card)
+
+    def test_number(self):
+        self.assertRaises(hanabi.deck.Card('R',7), AssertionError)
 
 class HandTest(unittest.TestCase):
     # test __special__ functions
