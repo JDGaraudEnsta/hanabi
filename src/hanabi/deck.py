@@ -245,7 +245,7 @@ class Game:
             elif isinstance(_choice, ai.AI):
                 choice = _choice.play()
             elif isinstance(_choice, str):
-                pass
+                choice = _choice
             else: # assume it is a list
                 choice = _choice.pop(0)
                 print ('hanabi (auto)>', choice)

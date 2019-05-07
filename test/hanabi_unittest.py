@@ -171,7 +171,9 @@ class GameTest(unittest.TestCase):
 
     # lines 193, 227
     def test_A1(self):
-        pass
+        game = hanabi.Game(2)
+        game.quiet = True
+        game.turn('p3')  # check that we can play blindly
 
     # lines 227, 261
     def test_B1(self):
