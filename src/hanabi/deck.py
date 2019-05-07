@@ -252,6 +252,8 @@ class Game:
                 if choice.strip()=='':
                     continue
             elif isinstance(_choice, ai.AI):
+                # fixme: duck-typing seems more natural to students, as in
+                #     try: _choice.play() except AttributeError ...
                 choice = _choice.play()
             elif isinstance(_choice, str):
                 choice = _choice
@@ -336,7 +338,12 @@ class Game:
 
         clue[0] is within (12345RBGWY).
         By default, the clue is given to the next player (backwards compatibility with 2 payers games).
-        If clue[1] is give it is the initial (ABCDE) or index (1234) oof the target player.
+        If clue[1] is given it is the initial (ABCDE) or index (1234) of the target player.
+
+        Example:
+           hanabi> cWB    # is a white clue to Benji
+           hanabi> c1     # is a 1 clue to newt player
+           hanabi> cRed   # is no longer possible, unfortunately
         """
 
         hint = clue[0].upper()  # so cr is valid to clue Red
@@ -359,12 +366,16 @@ class Game:
 
         self.log (self.current_player_name, "gives a clue", hint, "to", target_name)
         #  player = clue[1]  # if >=3 players
+        targetted_card = False
         for card in self.hands[target_index].cards:
             if hint in str(card):
+                targetted_card = True
                 if hint in "12345":
                     card.number_clue = hint
                 else:
                     card.color_clue = hint
+        if not targetted_card:
+            raise ValueError("This clue is not valid (it matches no card in the target hand)")
         self.next_player()
 
     def examine_piles(self, *unused):

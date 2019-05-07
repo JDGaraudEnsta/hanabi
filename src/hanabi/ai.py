@@ -22,7 +22,7 @@ class AI:
         #return sum([x.cards for x in self.other_hands], [])
         return list(itertools.chain.from_iterable([hand.cards for hand in self.other_hands]))
 
-        
+
 class Cheater(AI):
     """
     This player can see his own cards!
@@ -66,7 +66,7 @@ class Cheater(AI):
             return "d%d"%discardable[0]
 
         ## 2nd type of discard: I have a card, and my partner too
-        
+
         discardable2 = [ i+1 for (i,card) in enumerate(game.current_hand.cards)
                          if card in self.other_players_cards
                        ]
@@ -107,8 +107,8 @@ class Cheater(AI):
         # if reach here, can't play, can't discard safely, no card to clue-save
         # Let's give a random clue, to see if partner can unblock me
         if game.blue_coins >0:
-            print ('Cheater would clue randomly: cW')
-            return 'cw'
+            print ('Cheater would clue randomly:')
+            return 'c'+random.choice('12345RGBWY')
 
         # If reach here, can't play, can't discard safely
         # No blue-coin left.
