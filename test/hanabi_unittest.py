@@ -75,7 +75,7 @@ class DeckTest(unittest.TestCase):
 
         for k in range(10):
 
-            # On test si sur 10 mélange le deck est bien différent au moins 2 fois
+            # On test si sur 10 melange le deck est bien different au moins 2 fois
 
             Paquet_aux.cards = Paquet.cards
             Paquet.shuffle()
@@ -85,7 +85,7 @@ class DeckTest(unittest.TestCase):
 
     def test_draw(self):
 
-        # On teste si la carte piochée est la bonne et si le deck a bien été délesté d'une carte
+        # On teste si la carte piochee est la bonne et si le deck a bien ete deleste d'une carte
 
         Paquet = hanabi.Deck()
         Paquet.shuffle()
@@ -98,7 +98,7 @@ class DeckTest(unittest.TestCase):
 
     def test_deal(self):
 
-        #On test si le nombre de carte par main est le bon pour 5, 4 et 3 et si les mains retournées sont de la classe Hand
+        #On test si le nombre de carte par main est le bon pour 5, 4 et 3 et si les mains retournees sont de la classe Hand
 
         Paquet = hanabi.Deck()
         Hands = Paquet.deal(5)
@@ -155,7 +155,7 @@ class DeckTest2(unittest.TestCase):
             self.deck_init=hanabi.deck.Deck()
             self. deck_init.deal(nhands)
             self.assertEqual(len(self.deck_init.cards),len(hanabi.deck.Deck().cards)-nhands*self.deck_init.cards_by_player[nhands])
-            #On verifie que le bon nombre de cartes a ete distribue, et que celles-ci ont bien ete retirees de la pîoche.
+            #On verifie que le bon nombre de cartes a ete distribue, et que celles-ci ont bien ete retirees de la pioche.
     
 
 
