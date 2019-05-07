@@ -129,6 +129,34 @@ class DeckTest(unittest.TestCase):
         self.assertEqual(b, True)
 
 
+class DeckTest2(unittest.TestCase):
+    # contributed by I. Abdouli
+    # test normal functions
+    def test_shuffle(self):
+        self.deck_init = hanabi.deck.Deck()
+        self.deck_init.shuffle()
+        self.deck_init_2=hanabi.deck.Deck()
+        self.assertNotEqual(self.deck_init,self.deck_init_2)
+        #On verifie qu'on obtient bien un paquet different.
+        self.assertEqual(len(self.deck_init.cards),len(self.deck_init_2.cards))
+        #On verifie que le nombre de cartes est reste identique.
+
+    def test_draw(self):
+        self.deck_init = hanabi.deck.Deck()
+        card=self.deck_init.cards[0]
+        card2=self.deck_init.draw()
+        self.assertEqual(len(self.deck_init.cards),len(hanabi.deck.Deck().cards)-1)
+        #On verifie que la carte piochee a bien ete retiree de la pioche.
+        self.assertEqual(card,card2)
+        #On verifie que la carte piochee est bien celle qui etait en haut du paquet.
+
+    def test_deal(self):
+        for nhands in range(2,6):
+            self.deck_init=hanabi.deck.Deck()
+            self. deck_init.deal(nhands)
+            self.assertEqual(len(self.deck_init.cards),len(hanabi.deck.Deck().cards)-nhands*self.deck_init.cards_by_player[nhands])
+            #On verifie que le bon nombre de cartes a ete distribue, et que celles-ci ont bien ete retirees de la pîoche.
+    
 
 
 class GameTest(unittest.TestCase):
