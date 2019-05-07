@@ -3,7 +3,7 @@
 python3 hanabi_unittest.py || { echo "hanabi_unittest.py failed. Exiting now." ; exit 1 ; }
 
 for f in game*.py; do
-    hanabi <<< ">self.load('$f')" |tee $f.log
+    hanabi -q <<< ">self.load('$f')" |tee $f.log
 done
 
 declare -A scores

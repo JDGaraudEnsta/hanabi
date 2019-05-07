@@ -150,7 +150,7 @@ class Game:
         >>> # without AI, the user is prompted:
         >>> game.turn()   # just one round
         >>> game.run()    # or a whole game
-        >>> 
+        >>>
         >>> # if an AI is set, it will play the game:
         >>> ai = hanabi.ai.Cheater(game)
         >>> game.turn(ai)
@@ -170,9 +170,18 @@ class Game:
             'x': self.examine_piles,
             'l': self.load,
             '>': self.command,  # cheat-code !
-            '?': (lambda x: print(ai.Cheater(self).play()))
+            '?': (lambda x: self.log(ai.Cheater(self).play()))
         }
         self.reset(players, multi)
+        self.quiet = False
+
+
+    def log(self, *args, **kwargs):
+        if self.quiet:
+            pass
+        else:
+            print(*args, **kwargs)
+
 
     def reset(self, players=2, multi=False, cards=None):
         "Reset this game."
@@ -219,17 +228,17 @@ class Game:
            - a list of actions, because I chose to
              record invalid actions too (and these loop within this file).
         """
-        print()
-        print (self.current_player_name,
+        self.log()
+        self.log (self.current_player_name,
                "this is what you remember:",
                self.current_hand.str_clue(),
 #               self.current_hand,
                "\n      this is what you see:")
         for player, hand in zip(self.players[1:], self.hands[1:]):
-            print("%32s"%player, hand)
-            print(" "*32, hand.str_clue())
-        
-        print("""What do you want to play?
+            self.log("%32s"%player, hand)
+            self.log(" "*32, hand.str_clue())
+
+        self.log("""What do you want to play?
         (d)iscard a card (12345)
         give a (c)lue (RBGWY 12345)
         (p)lay a card (12345)
@@ -248,7 +257,7 @@ class Game:
                 choice = _choice
             else: # assume it is a list
                 choice = _choice.pop(0)
-                print ('hanabi (auto)>', choice)
+                self.log ('hanabi (auto)>', choice)
             # so here, choice is a 2 or 3 letters code:
             #  d2 (discard 2nd card)
             #  cR (give Red clue) ... will become cRA (give Red to Alice)
@@ -259,9 +268,9 @@ class Game:
                 self.actions[choice[0]](choice[1:])
                 return
             except KeyError as e:
-                print (e, "is not a valid action. Try again.")
+                self.log (e, "is not a valid action. Try again.")
             except (ValueError, IndexError) as e:
-                print (e, "Try again")
+                self.log (e, "Try again")
 
     def add_blue_coin(self):
         if self.blue_coins == 8:
@@ -293,7 +302,7 @@ class Game:
             raise
         self.discard_pile.append(card)
         self.discard_pile.sort()
-        print (self.current_player_name, "discards", card.str_color(),
+        self.log (self.current_player_name, "discards", card.str_color(),
                "and now we have %d blue coins."%self.blue_coins)
         self.next_player()
 
@@ -301,12 +310,12 @@ class Game:
         "Action: play the given card."
         icard = int(index)
         card = self.current_hand.pop(icard)
-        print (self.current_player_name, "tries to play", card, "... ",end="")
+        self.log (self.current_player_name, "tries to play", card, "... ",end="")
 
         if (self.piles[card.color]+1 == card.number):
             self.piles[card.color] += 1
-            print ("successfully!")
-            print (card.color.colorize(
+            self.log ("successfully!")
+            self.log (card.color.colorize(
                 ascii_art.fireworks[self.piles[card.color]]))
             if self.piles[card.color] == 5:
                 try:
@@ -316,15 +325,15 @@ class Game:
         else:
             # misplay!
             self.discard_pile.append(card)
-            print ("That was a bad idea!")
-            print (ascii_art.kaboom)
+            self.log ("That was a bad idea!")
+            self.log (ascii_art.kaboom)
             self.add_red_coin()
         self.print_piles()
         self.next_player()
 
     def clue(self, clue):
         """Action: give a clue.
-        
+
         clue[0] is within (12345RBGWY).
         By default, the clue is given to the next player (backwards compatibility with 2 payers games).
         If clue[1] is give it is the initial (ABCDE) or index (1234) oof the target player.
@@ -348,7 +357,7 @@ class Game:
 
         target_name = self.players[target_index]
 
-        print (self.current_player_name, "gives a clue", hint, "to", target_name)
+        self.log (self.current_player_name, "gives a clue", hint, "to", target_name)
         #  player = clue[1]  # if >=3 players
         for card in self.hands[target_index].cards:
             if hint in str(card):
@@ -363,16 +372,16 @@ class Game:
         self.print_piles()
 
     def _bw_print_piles(self):
-        print("    Discard:", self.discard_pile)
+        self.log("    Discard:", self.discard_pile)
         for c in list(Color):
-            print("%6s"%c, "pile:", self.piles[c])
-        print ("     Coins:", self.blue_coins, "blue,", self.red_coins, "red")
+            self.log("%6s"%c, "pile:", self.piles[c])
+        self.log ("     Coins:", self.blue_coins, "blue,", self.red_coins, "red")
     def _color_print_piles(self):
-        print("       Deck:", len(self.deck.cards))
-        print("    Discard:", self.discard_pile)
+        self.log("       Deck:", len(self.deck.cards))
+        self.log("    Discard:", self.discard_pile)
         for c in list(Color):
-            print(c.colorize("%6s"%c, "pile:", self.piles[c]))
-        print ("     Coins:", self.blue_coins, "blue,", self.red_coins, "red")
+            self.log(c.colorize("%6s"%c, "pile:", self.piles[c]))
+        self.log ("     Coins:", self.blue_coins, "blue,", self.red_coins, "red")
     def print_piles(self):
         self._color_print_piles()
 
@@ -400,11 +409,11 @@ class Game:
 
     def command(self, args):
         "Action: Run a python command from Hanabi (yes, it is a cheat code: self is the current Game)."
-        print('About to run `%s`'%args)
+        self.log('About to run `%s`'%args)
         try:
             exec(args)
         except Exception as e:
-            print('Error:', e)
+            self.log('Error:', e)
             #raise
 
     @property
@@ -416,8 +425,8 @@ class Game:
             last_players = list(self.players)
             while last_players:
                 if len(self.deck.cards) == 0:
-                    print()
-                    print("--> Last turns:",
+                    self.log()
+                    self.log("--> Last turns:",
                           " ".join(last_players),
                           "may still play once.")
                     try:
@@ -426,14 +435,14 @@ class Game:
                         pass  # if Alice 'x', she is removed but plays again
                 self.turn(self.ai)
                 if self.score == 25: raise StopIteration("it is perfect!")
-#            print ("Game finished because deck exhausted")
+#            self.log ("Game finished because deck exhausted")
         except (KeyboardInterrupt, EOFError, StopIteration) as e:
-            print ('Game finished because of', e)
+            self.log ('Game finished because of', e)
             pass
         self.save('autosave.py')
 
-        print("\nOne final glance at the table:")
-        print(self.starting_deck)
+        self.log("\nOne final glance at the table:")
+        self.log(self.starting_deck)
         self.print_piles()
         print("\nGoodbye. Your score is %d"%self.score)
 
@@ -463,7 +472,7 @@ moves = %r
         for l in f:
             exec(l, globals(), loaded)
 
-        print ('Loaded:', loaded)
+        self.log ('Loaded:', loaded)
         multi = False
         players = list(loaded['players'])
         cards = loaded['cards']
