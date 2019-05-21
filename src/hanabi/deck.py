@@ -429,6 +429,8 @@ class Game:
 
     @property
     def score(self):
+        if self.red_coins >= 3:
+            return 0
         return sum(self.piles.values())
 
     def run(self):
