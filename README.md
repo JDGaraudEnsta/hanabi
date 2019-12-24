@@ -23,15 +23,15 @@ There are many possible tasks:
   - share with everyone this improvement,
 
 - improve the CheaterAI
-  -- answer the question (still an open question afaik) what is the best possible score, statistically speaking.
+  -- answer the question (still an open question afaik): what is the best possible score, statistically speaking?
 
 - add AIs. Some suggestions:
-  - RandomAI (plays randomly)
-  - DirectAI (plays whatever is hinted)
-  - BGAAI (plays Board Game Arena's standard)
-  - HansimAI (see below)
-  - train a machine learning (I'm not sure if this will give anything interesting without powerful CPU/GPU resources)
-  - design your own, from scratch or by improving another
+  - RandomAI (plays randomly),
+  - DirectAI (plays whatever is hinted),
+  - BGAAI (plays Board Game Arena's standard),
+  - HansimAI (see below),
+  - train a machine learning (I'm not sure if this will give anything interesting without powerful CPU/GPU resources),
+  - design your own, from scratch or by improving an existing one.
 
 Keep track of scores for all these games/AI. 
 We will want to compare: different AIs on a same deck, or a given AI over a 1000 decks. 
@@ -42,15 +42,15 @@ We will need to see why a certain AI fails on a certain game.
 
 - make it workable from two separate screens (network?)
 
+- you may also design a GUI, but be warned that this is a very time-consuming task.
+I like PySide2. Tkinter is more portable but harder to learn imho. 
+
 
 During the project:
   - make sure you understand the "replay" mode
   - add tests (UnitTest or whole tests)
   - keep notes on your questions, decisions, discussions (github's wiki)
 
-
-You may also design a GUI, but be warned that this is a very time-consuming task.
-I like PySide2. Tkinter is more portable but harder to learn imho. 
 
 
 
@@ -85,6 +85,7 @@ If `hanabi` doesn't start (`bash: hanabi: command not found`), add this to your 
 * [deepmind: Atari](https://arxiv.org/pdf/1312.5602v1.pdf)
 * [deepmind: SC2](https://arxiv.org/abs/1708.04782)
 * [deepmind: Hanabi](https://arxiv.org/abs/1902.00506)
+* [facebook's](https://ai.facebook.com/blog/building-ai-that-can-master-complex-cooperative-games-with-hidden-information/)
 * todo: find non-deepmind references?
 
 
