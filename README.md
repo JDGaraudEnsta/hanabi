@@ -92,6 +92,7 @@ If `hanabi` doesn't start (`bash: hanabi: command not found`), add this to your 
 
 ### Misc (coding principles, project, ...)
 
+* [How to Write a Git Commit Message](https://chris.beams.io/posts/git-commit/)
 * [keep it simple](https://en.wikipedia.org/wiki/KISS_principle)
 * [rule of least surprise](http://www.catb.org/esr/writings/taoup/), [catbaz](http://www.catb.org/esr/writings/cathedral-bazaar/)
 * [rubber duck debugging](https://en.wikipedia.org/wiki/Rubber_duck_debugging)
