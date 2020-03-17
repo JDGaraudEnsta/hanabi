@@ -80,14 +80,12 @@ If `hanabi` doesn't start (`bash: hanabi: command not found`), add this to your 
 * [hanabi conventions (hanabi-live)](https://github.com/Zamiell/hanabi-conventions), and references therein.
 
 
-### AI
+### AI (deep learning)
 
 * [deepmind: Atari](https://arxiv.org/pdf/1312.5602v1.pdf)
 * [deepmind: SC2](https://arxiv.org/abs/1708.04782)
 * [deepmind: Hanabi](https://arxiv.org/abs/1902.00506)
 * [facebook's](https://ai.facebook.com/blog/building-ai-that-can-master-complex-cooperative-games-with-hidden-information/)
-* todo: find non-deepmind references?
-
 
 
 ### Misc (coding principles, project, ...)
@@ -98,3 +96,4 @@ If `hanabi` doesn't start (`bash: hanabi: command not found`), add this to your 
 * [rubber duck debugging](https://en.wikipedia.org/wiki/Rubber_duck_debugging)
 * [markdown (overview)](https://guides.github.com/features/mastering-markdown/), [markdown (in details)](https://github.github.com/gfm/)
 * [BGA state machine](https://www.slideshare.net/boardgamearena/bga-studio-focus-on-bga-game-state-machine)
+* dive into python3, esp. chapter on Unit testing
