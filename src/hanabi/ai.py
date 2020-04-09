@@ -4,6 +4,7 @@ Artificial Intelligence to play Hanabi.
 
 import itertools
 
+
 class AI:
     """
     AI base class: some basic functions, game analysis.
@@ -19,10 +20,10 @@ class AI:
     @property
     def other_players_cards(self):
         "All of other players's cards, concatenated in a single list."
-        #return sum([x.cards for x in self.other_hands], [])
+        # return sum([x.cards for x in self.other_hands], [])
         return list(itertools.chain.from_iterable([hand.cards for hand in self.other_hands]))
 
-        
+
 class Cheater(AI):
     """
     This player can see his own cards!
@@ -37,41 +38,42 @@ class Cheater(AI):
     def play(self):
         "Return the best cheater action."
         game = self.game
-        playable = [ (i+1, card.number) for (i,card) in
+        playable = [ (i+1, card.number) for (i, card) in
                      enumerate(game.current_hand.cards)
                      if game.piles[card.color]+1 == card.number ]
 
         if playable:
             # sort by ascending number, then newest
             playable.sort(key=lambda p: (p[1], -p[0]))
-            print ('Cheater would play:', "p%d"%playable[0][0], end=' ')
-            if (len(playable)>1):
+            print('Cheater would play:', "p%d"%playable[0][0], end=' ')
+            if (len(playable) > 1):
                 print('but could also pick:', playable[1:])
-            else: print()
+            else:
+                print()
 
             return "p%d"%playable[0][0]
 
-
-        discardable = [ i+1 for (i,card) in
+        #
+        discardable = [ i+1 for (i, card) in
                         enumerate(game.current_hand.cards)
                         if ( (card.number <= game.piles[card.color])
-                             or (game.current_hand.cards.count(card)>1)
+                             or (game.current_hand.cards.count(card) > 1)
                         ) ]
         # discard already played cards, doubles in my hand
         # fixme: discard doubles, if I see it in partner's hand
         # fixme: il me manque les cartes sup d'une pile morte
 
-        if discardable and (game.blue_coins<8):
-            print ('Cheater would discard:', "d%d"%discardable[0], discardable)
+        if discardable and (game.blue_coins < 8):
+            print('Cheater would discard:', "d%d"%discardable[0], discardable)
             return "d%d"%discardable[0]
 
         ## 2nd type of discard: I have a card, and my partner too
-        
-        discardable2 = [ i+1 for (i,card) in enumerate(game.current_hand.cards)
+
+        discardable2 = [ i+1 for (i, card) in enumerate(game.current_hand.cards)
                          if card in self.other_players_cards
                        ]
-        if discardable2 and (game.blue_coins<8):
-            print ('Cheater would discard2:', "d%d"%discardable2[0], discardable2)
+        if discardable2 and (game.blue_coins < 8):
+            print('Cheater would discard2:', "d%d"%discardable2[0], discardable2)
             return "d%d"%discardable2[0]
 
 
@@ -86,7 +88,7 @@ class Cheater(AI):
             # this loop is such that we prefer to clue an card close to chop
             # would be nice to clue an unclued first, instead of a already clued
             for p in precious:
-                #print (p, p.number_clue, p.color_clue)
+                # print(p, p.number_clue, p.color_clue)
                 if p.number_clue is False:
                     clue = "c%d"%p.number
                     break
@@ -97,23 +99,23 @@ class Cheater(AI):
                 # this one was tricky:
                 # don't want to give twice the same clue
             if clue:
-                print ('Cheater would clue a precious:',
+                print('Cheater would clue a precious:',
                        clue, precious)
-                if game.blue_coins>0:
+                if game.blue_coins > 0:
                     return clue
-                print ("... but there's no blue coin left!")
+                print("... but there's no blue coin left!")
 
 
         # if reach here, can't play, can't discard safely, no card to clue-save
         # Let's give a random clue, to see if partner can unblock me
-        if game.blue_coins >0:
-            print ('Cheater would clue randomly: cW')
+        if game.blue_coins > 0:
+            print('Cheater would clue randomly: cW')
             return 'cw'
 
         # If reach here, can't play, can't discard safely
         # No blue-coin left.
         # Must discard a card. Let's choose a non-precious one (preferably a 4)
-        mynotprecious = [ (card.number,i+1) for (i,card) in
+        mynotprecious = [ (card.number, i+1) for (i, card) in
                           enumerate(game.current_hand.cards)
                           if not (
                                   (1+game.discard_pile.cards.count(card))
@@ -127,7 +129,7 @@ class Cheater(AI):
 
         # Oh boy, not even a safe discard, this is gonna hurt!
         # it's a loss. Discard the biggest
-        myprecious = [ (card.number,i+1) for (i,card) in enumerate(game.current_hand.cards) ]
+        myprecious = [ (card.number, i+1) for (i, card) in enumerate(game.current_hand.cards) ]
         myprecious.sort(key=lambda p: (-p[0], p[1]))
         act = 'd%d'%myprecious[0][1]
         print('Cheater is doomed and must discard:', act, myprecious)
