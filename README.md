@@ -68,6 +68,16 @@ If `hanabi` doesn't start (`bash: hanabi: command not found`), add this to your 
 
     export PATH=$HOME/.local/bin:$PATH
 
+For 
+
+### Windows
+
+    pip install pyreadline
+    cd src
+    python3 setup.py install --user
+    
+    
+
 
 ## Bibliography
 
