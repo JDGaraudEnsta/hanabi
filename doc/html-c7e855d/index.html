@@ -1,0 +1,483 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>Welcome to Hanabi’s documentation! &#8212; Hanabi 0.1.0 documentation</title>
+    <link rel="stylesheet" href="_static/nature.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <script type="text/javascript" src="_static/language_data.js"></script>
+    <link rel="shortcut icon" href="_static/hanabi.ico"/>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" /> 
+  </head><body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="nav-item nav-item-0"><a href="#">Hanabi 0.1.0 documentation</a> &#187;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="welcome-to-hanabi-s-documentation">
+<h1>Welcome to Hanabi’s documentation!<a class="headerlink" href="#welcome-to-hanabi-s-documentation" title="Permalink to this headline">¶</a></h1>
+<p>Contents:</p>
+<div class="toctree-wrapper compound">
+</div>
+</div>
+<div class="section" id="introduction">
+<h1>Introduction<a class="headerlink" href="#introduction" title="Permalink to this headline">¶</a></h1>
+<p>This package plays Hanabi, the best card game ever.</p>
+<p>The sources are on Github here: <a class="reference external" href="https://github.com/JDGaraudEnsta/hanabi">https://github.com/JDGaraudEnsta/hanabi</a></p>
+</div>
+<div class="section" id="module-reference">
+<h1>Module reference<a class="headerlink" href="#module-reference" title="Permalink to this headline">¶</a></h1>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Release:</th><td class="field-body">0.1.0</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Date:</th><td class="field-body">Apr 10, 2020</td>
+</tr>
+</tbody>
+</table>
+<table border="1" class="longtable docutils">
+<colgroup>
+<col width="10%" />
+<col width="90%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td><a class="reference internal" href="#module-hanabi.deck" title="hanabi.deck"><code class="xref py py-obj docutils literal notranslate"><span class="pre">hanabi.deck</span></code></a></td>
+<td>Hanabi deck and game engine module.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="#module-hanabi.ai" title="hanabi.ai"><code class="xref py py-obj docutils literal notranslate"><span class="pre">hanabi.ai</span></code></a></td>
+<td>Artificial Intelligence to play Hanabi.</td>
+</tr>
+</tbody>
+</table>
+<div class="section" id="module-hanabi.deck">
+<span id="hanabi-deck"></span><h2>hanabi.deck<a class="headerlink" href="#module-hanabi.deck" title="Permalink to this headline">¶</a></h2>
+<p>Hanabi deck and game engine module.</p>
+<p>See also the program hanabi.</p>
+<table border="1" class="longtable docutils">
+<colgroup>
+<col width="10%" />
+<col width="90%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td><a class="reference internal" href="#hanabi.deck.Card" title="hanabi.deck.Card"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Card</span></code></a>([color,&nbsp;number])</td>
+<td>A hanabi card.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="#hanabi.deck.Hand" title="hanabi.deck.Hand"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Hand</span></code></a>(deck[,&nbsp;n])</td>
+<td>A Hanabi hand, with n cards, drawn from the deck.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="#hanabi.deck.Deck" title="hanabi.deck.Deck"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Deck</span></code></a>([cards])</td>
+<td>A Hanabi deck of cards (50 cards).</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="#hanabi.deck.Game" title="hanabi.deck.Game"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Game</span></code></a>([players,&nbsp;multi])</td>
+<td>A game of Hanabi.</td>
+</tr>
+</tbody>
+</table>
+<dl class="class">
+<dt id="hanabi.deck.Card">
+<em class="property">class </em><code class="descclassname">hanabi.deck.</code><code class="descname">Card</code><span class="sig-paren">(</span><em>color=None</em>, <em>number=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/hanabi/deck.html#Card"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#hanabi.deck.Card" title="Permalink to this definition">¶</a></dt>
+<dd><p>A hanabi card.</p>
+<dl class="method">
+<dt id="hanabi.deck.Card.str_clue">
+<code class="descname">str_clue</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/hanabi/deck.html#Card.str_clue"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#hanabi.deck.Card.str_clue" title="Permalink to this definition">¶</a></dt>
+<dd><p>What I know about this card.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="hanabi.deck.Card.str_color">
+<code class="descname">str_color</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/hanabi/deck.html#Card.str_color"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#hanabi.deck.Card.str_color" title="Permalink to this definition">¶</a></dt>
+<dd><p>Colorized string for this card.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="hanabi.deck.Color">
+<em class="property">class </em><code class="descclassname">hanabi.deck.</code><code class="descname">Color</code><a class="reference internal" href="_modules/hanabi/deck.html#Color"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#hanabi.deck.Color" title="Permalink to this definition">¶</a></dt>
+<dd><p>Card colors. Int values correspond to xterm’s.</p>
+<dl class="attribute">
+<dt id="hanabi.deck.Color.Blue">
+<code class="descname">Blue</code><em class="property"> = 34</em><a class="headerlink" href="#hanabi.deck.Color.Blue" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="hanabi.deck.Color.Green">
+<code class="descname">Green</code><em class="property"> = 32</em><a class="headerlink" href="#hanabi.deck.Color.Green" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="hanabi.deck.Color.Red">
+<code class="descname">Red</code><em class="property"> = 31</em><a class="headerlink" href="#hanabi.deck.Color.Red" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="hanabi.deck.Color.White">
+<code class="descname">White</code><em class="property"> = 37</em><a class="headerlink" href="#hanabi.deck.Color.White" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="hanabi.deck.Color.Yellow">
+<code class="descname">Yellow</code><em class="property"> = 33</em><a class="headerlink" href="#hanabi.deck.Color.Yellow" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="hanabi.deck.Color.colorize">
+<code class="descname">colorize</code><span class="sig-paren">(</span><em>*args</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/hanabi/deck.html#Color.colorize"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#hanabi.deck.Color.colorize" title="Permalink to this definition">¶</a></dt>
+<dd><p>Colorize the given string</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="hanabi.deck.Deck">
+<em class="property">class </em><code class="descclassname">hanabi.deck.</code><code class="descname">Deck</code><span class="sig-paren">(</span><em>cards=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/hanabi/deck.html#Deck"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#hanabi.deck.Deck" title="Permalink to this definition">¶</a></dt>
+<dd><p>A Hanabi deck of cards (50 cards).</p>
+<dl class="attribute">
+<dt id="hanabi.deck.Deck.card_count">
+<code class="descname">card_count</code><em class="property"> = {1: 3, 2: 2, 3: 2, 4: 2, 5: 1}</em><a class="headerlink" href="#hanabi.deck.Deck.card_count" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="hanabi.deck.Deck.cards_by_player">
+<code class="descname">cards_by_player</code><em class="property"> = {2: 5, 3: 5, 4: 4, 5: 4}</em><a class="headerlink" href="#hanabi.deck.Deck.cards_by_player" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="hanabi.deck.Deck.deal">
+<code class="descname">deal</code><span class="sig-paren">(</span><em>nhands</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/hanabi/deck.html#Deck.deal"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#hanabi.deck.Deck.deal" title="Permalink to this definition">¶</a></dt>
+<dd><p>Deal n hands and return them.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="hanabi.deck.Deck.draw">
+<code class="descname">draw</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/hanabi/deck.html#Deck.draw"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#hanabi.deck.Deck.draw" title="Permalink to this definition">¶</a></dt>
+<dd><p>Draw a card from the deck.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="hanabi.deck.Deck.shuffle">
+<code class="descname">shuffle</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/hanabi/deck.html#Deck.shuffle"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#hanabi.deck.Deck.shuffle" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="hanabi.deck.Game">
+<em class="property">class </em><code class="descclassname">hanabi.deck.</code><code class="descname">Game</code><span class="sig-paren">(</span><em>players=2</em>, <em>multi=False</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/hanabi/deck.html#Game"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#hanabi.deck.Game" title="Permalink to this definition">¶</a></dt>
+<dd><p>A game of Hanabi.</p>
+<p>Usage:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">hanabi</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">game</span> <span class="o">=</span> <span class="n">hanabi</span><span class="o">.</span><span class="n">Game</span><span class="p">(</span><span class="n">players</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">game</span><span class="o">.</span><span class="n">run</span><span class="p">()</span>    <span class="c1"># users play a whole game</span>
+</pre></div>
+</div>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="c1"># if an AI is set, it will play the game automatically:</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">ai</span> <span class="o">=</span> <span class="n">hanabi</span><span class="o">.</span><span class="n">ai</span><span class="o">.</span><span class="n">Cheater</span><span class="p">(</span><span class="n">game</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">game</span><span class="o">.</span><span class="n">ai</span> <span class="o">=</span> <span class="n">ai</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">game</span><span class="o">.</span><span class="n">run</span><span class="p">()</span>
+</pre></div>
+</div>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="c1"># For debugging, a single player turn can be played:</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">game</span> <span class="o">=</span> <span class="n">hanabi</span><span class="o">.</span><span class="n">Game</span><span class="p">(</span><span class="n">players</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">game</span><span class="o">.</span><span class="n">turn</span><span class="p">()</span>  <span class="c1"># Alice will be asked to play</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">game</span><span class="o">.</span><span class="n">turn</span><span class="p">()</span>  <span class="c1"># and now Benji</span>
+</pre></div>
+</div>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="c1"># Same with an AI:</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">game</span> <span class="o">=</span> <span class="n">hanabi</span><span class="o">.</span><span class="n">Game</span><span class="p">(</span><span class="n">players</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">ai</span> <span class="o">=</span> <span class="n">hanabi</span><span class="o">.</span><span class="n">ai</span><span class="o">.</span><span class="n">Cheater</span><span class="p">(</span><span class="n">game</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">game</span><span class="o">.</span><span class="n">turn</span><span class="p">(</span><span class="n">ai</span><span class="p">)</span>  <span class="c1"># the ai will play just once</span>
+</pre></div>
+</div>
+<dl class="attribute">
+<dt id="hanabi.deck.Game.Players">
+<code class="descname">Players</code><em class="property"> = ['Alice', 'Benji', 'Clara', 'Dante', 'Elric']</em><a class="headerlink" href="#hanabi.deck.Game.Players" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="hanabi.deck.Game.add_blue_coin">
+<code class="descname">add_blue_coin</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/hanabi/deck.html#Game.add_blue_coin"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#hanabi.deck.Game.add_blue_coin" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="hanabi.deck.Game.add_red_coin">
+<code class="descname">add_red_coin</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/hanabi/deck.html#Game.add_red_coin"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#hanabi.deck.Game.add_red_coin" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="hanabi.deck.Game.clue">
+<code class="descname">clue</code><span class="sig-paren">(</span><em>clue</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/hanabi/deck.html#Game.clue"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#hanabi.deck.Game.clue" title="Permalink to this definition">¶</a></dt>
+<dd><p>Action: give a clue.</p>
+<p>clue[0] is within (12345RBGWY).
+By default, the clue is given to the next player (backwards compatibility with 2 payers games).
+If clue[1] is given it is the initial (ABCDE) or index (1234) of the target player.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="hanabi.deck.Game.command">
+<code class="descname">command</code><span class="sig-paren">(</span><em>args</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/hanabi/deck.html#Game.command"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#hanabi.deck.Game.command" title="Permalink to this definition">¶</a></dt>
+<dd><p>Action: Run a python command from Hanabi (yes, it is a cheat code: self is the current Game).</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="hanabi.deck.Game.discard">
+<code class="descname">discard</code><span class="sig-paren">(</span><em>index</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/hanabi/deck.html#Game.discard"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#hanabi.deck.Game.discard" title="Permalink to this definition">¶</a></dt>
+<dd><p>Action: discard the given card from current hand (the first if index is an empty string).</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="hanabi.deck.Game.examine_piles">
+<code class="descname">examine_piles</code><span class="sig-paren">(</span><em>*unused</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/hanabi/deck.html#Game.examine_piles"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#hanabi.deck.Game.examine_piles" title="Permalink to this definition">¶</a></dt>
+<dd><p>Action: look at the table.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="hanabi.deck.Game.load">
+<code class="descname">load</code><span class="sig-paren">(</span><em>filename</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/hanabi/deck.html#Game.load"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#hanabi.deck.Game.load" title="Permalink to this definition">¶</a></dt>
+<dd><p>Load a saved game, replay the moves.</p>
+<p>A saved game consists of the variables players, cards and moves.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="hanabi.deck.Game.log">
+<code class="descname">log</code><span class="sig-paren">(</span><em>*args</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/hanabi/deck.html#Game.log"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#hanabi.deck.Game.log" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="hanabi.deck.Game.next_player">
+<code class="descname">next_player</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/hanabi/deck.html#Game.next_player"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#hanabi.deck.Game.next_player" title="Permalink to this definition">¶</a></dt>
+<dd><p>Switch to next player.</p>
+<p>Player 0 is <em>always</em> the current_player.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="hanabi.deck.Game.play">
+<code class="descname">play</code><span class="sig-paren">(</span><em>index</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/hanabi/deck.html#Game.play"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#hanabi.deck.Game.play" title="Permalink to this definition">¶</a></dt>
+<dd><p>Action: play the given card.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="hanabi.deck.Game.print_piles">
+<code class="descname">print_piles</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/hanabi/deck.html#Game.print_piles"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#hanabi.deck.Game.print_piles" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="hanabi.deck.Game.remove_blue_coin">
+<code class="descname">remove_blue_coin</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/hanabi/deck.html#Game.remove_blue_coin"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#hanabi.deck.Game.remove_blue_coin" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="hanabi.deck.Game.reset">
+<code class="descname">reset</code><span class="sig-paren">(</span><em>players=2</em>, <em>multi=False</em>, <em>cards=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/hanabi/deck.html#Game.reset"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#hanabi.deck.Game.reset" title="Permalink to this definition">¶</a></dt>
+<dd><p>Reset this game.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="hanabi.deck.Game.run">
+<code class="descname">run</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/hanabi/deck.html#Game.run"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#hanabi.deck.Game.run" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="hanabi.deck.Game.save">
+<code class="descname">save</code><span class="sig-paren">(</span><em>filename</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/hanabi/deck.html#Game.save"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#hanabi.deck.Game.save" title="Permalink to this definition">¶</a></dt>
+<dd><p>Save starting deck and list of moves.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="hanabi.deck.Game.score">
+<code class="descname">score</code><a class="headerlink" href="#hanabi.deck.Game.score" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="hanabi.deck.Game.turn">
+<code class="descname">turn</code><span class="sig-paren">(</span><em>_choice=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/hanabi/deck.html#Game.turn"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#hanabi.deck.Game.turn" title="Permalink to this definition">¶</a></dt>
+<dd><p>Play one round: ask the player what she wants to do, then update the game.
+If _choice is not None, play it instead of asking.</p>
+<p>Note:</p>
+<blockquote>
+<div><dl class="docutils">
+<dt>If provided, _choice can be:</dt>
+<dd><ul class="first last simple">
+<li>None: the human will be prompted</li>
+<li>a (str), which is played</li>
+<li>an AI object (we will play what its function play() suggests)</li>
+<li>a list of actions, because I chose to
+record invalid actions too (and these loop within this file).</li>
+</ul>
+</dd>
+</dl>
+</div></blockquote>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="hanabi.deck.Hand">
+<em class="property">class </em><code class="descclassname">hanabi.deck.</code><code class="descname">Hand</code><span class="sig-paren">(</span><em>deck</em>, <em>n=5</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/hanabi/deck.html#Hand"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#hanabi.deck.Hand" title="Permalink to this definition">¶</a></dt>
+<dd><p>A Hanabi hand, with n cards, drawn from the deck.
+Also used for the discard pile.</p>
+<dl class="method">
+<dt id="hanabi.deck.Hand.append">
+<code class="descname">append</code><span class="sig-paren">(</span><em>c</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/hanabi/deck.html#Hand.append"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#hanabi.deck.Hand.append" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="hanabi.deck.Hand.pop">
+<code class="descname">pop</code><span class="sig-paren">(</span><em>i</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/hanabi/deck.html#Hand.pop"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#hanabi.deck.Hand.pop" title="Permalink to this definition">¶</a></dt>
+<dd><p>Pop a card from the hand, and draw a new one.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="hanabi.deck.Hand.sort">
+<code class="descname">sort</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/hanabi/deck.html#Hand.sort"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#hanabi.deck.Hand.sort" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="hanabi.deck.Hand.str_clue">
+<code class="descname">str_clue</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/hanabi/deck.html#Hand.str_clue"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#hanabi.deck.Hand.str_clue" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="module-hanabi.ai">
+<span id="hanabi-ai"></span><h2>hanabi.ai<a class="headerlink" href="#module-hanabi.ai" title="Permalink to this headline">¶</a></h2>
+<p>Artificial Intelligence to play Hanabi.</p>
+<dl class="class">
+<dt id="hanabi.ai.AI">
+<em class="property">class </em><code class="descclassname">hanabi.ai.</code><code class="descname">AI</code><span class="sig-paren">(</span><em>game</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/hanabi/ai.html#AI"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#hanabi.ai.AI" title="Permalink to this definition">¶</a></dt>
+<dd><p>AI base class: some basic functions, game analysis.</p>
+<dl class="attribute">
+<dt id="hanabi.ai.AI.other_hands">
+<code class="descname">other_hands</code><a class="headerlink" href="#hanabi.ai.AI.other_hands" title="Permalink to this definition">¶</a></dt>
+<dd><p>The list of other players’ hands.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="hanabi.ai.AI.other_players_cards">
+<code class="descname">other_players_cards</code><a class="headerlink" href="#hanabi.ai.AI.other_players_cards" title="Permalink to this definition">¶</a></dt>
+<dd><p>All of other players’s cards, concatenated in a single list.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="hanabi.ai.Cheater">
+<em class="property">class </em><code class="descclassname">hanabi.ai.</code><code class="descname">Cheater</code><span class="sig-paren">(</span><em>game</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/hanabi/ai.html#Cheater"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#hanabi.ai.Cheater" title="Permalink to this definition">¶</a></dt>
+<dd><p>This player can see his own cards!</p>
+<dl class="docutils">
+<dt>Algorithm:</dt>
+<dd><ul class="first last simple">
+<li>if 1-or-more card is playable: play the lowest one, then newest one</li>
+<li>if blue_coin&lt;8 and an unnecessary card present: discard it.</li>
+<li>if blue_coin&gt;0: give a clue on precious card (so a human can play with a Cheater)</li>
+<li>if blue_coin&lt;8: discard the largest one, except if it’s the last of its kind or in chop position in his opponent.</li>
+</ul>
+</dd>
+</dl>
+<dl class="method">
+<dt id="hanabi.ai.Cheater.play">
+<code class="descname">play</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/hanabi/ai.html#Cheater.play"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#hanabi.ai.Cheater.play" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return the best cheater action.</p>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+</div>
+<div class="section" id="indices-and-tables">
+<h1>Indices and tables<a class="headerlink" href="#indices-and-tables" title="Permalink to this headline">¶</a></h1>
+<ul class="simple">
+<li><a class="reference internal" href="genindex.html"><span class="std std-ref">Index</span></a></li>
+<li><a class="reference internal" href="py-modindex.html"><span class="std std-ref">Module Index</span></a></li>
+<li><a class="reference internal" href="search.html"><span class="std std-ref">Search Page</span></a></li>
+</ul>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+            <p class="logo"><a href="#">
+              <img class="logo" src="_static/hanabi.png" alt="Logo"/>
+            </a></p>
+  <h3><a href="#">Table of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">Welcome to Hanabi’s documentation!</a></li>
+<li><a class="reference internal" href="#introduction">Introduction</a></li>
+<li><a class="reference internal" href="#module-reference">Module reference</a><ul>
+<li><a class="reference internal" href="#module-hanabi.deck">hanabi.deck</a></li>
+<li><a class="reference internal" href="#module-hanabi.ai">hanabi.ai</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#indices-and-tables">Indices and tables</a></li>
+</ul>
+
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="_sources/index.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="nav-item nav-item-0"><a href="#">Hanabi 0.1.0 documentation</a> &#187;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2018, JD Garaud.
+      Last updated on Apr 10, 2020 (nature).
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.8.4.
+    </div>
+  </body>
+</html>
