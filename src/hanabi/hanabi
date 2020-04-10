@@ -13,7 +13,7 @@ parser = argparse.ArgumentParser(
 parser.add_argument("-n", type=int, default=2, help='number of players')
 parser.add_argument("--load", "-l", type=str, help='load a replay game')
 parser.add_argument("--ai", type=str, help='players are controlled by this AI')
-parser.add_argument("-q", "--quiet", action='store_true', help='Quiet mode, only the final score is displayed (requires an ai, obviously)')
+parser.add_argument("-q", "--quiet", action='store_true', help='Quiet mode, only the final score is displayed (requires --ai, or --load, obviously)')
 
 args = parser.parse_args()
 

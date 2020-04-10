@@ -1,5 +1,7 @@
 """
-Hanabi deck and game engine.
+Hanabi deck and game engine module.
+
+See also the program hanabi.
 
 .. autosummary::
    Card
@@ -164,15 +166,22 @@ class Game:
 
         >>> import hanabi
         >>> game = hanabi.Game(players=2)
-        >>> # without AI, the user is prompted:
-        >>> game.turn()   # just one round
-        >>> game.run()    # or a whole game
-        >>>
-        >>> # if an AI is set, it will play the game:
+        >>> game.run()    # users play a whole game
+
+        >>> # if an AI is set, it will play the game automatically:
         >>> ai = hanabi.ai.Cheater(game)
-        >>> game.turn(ai)
         >>> game.ai = ai
         >>> game.run()
+
+        >>> # For debugging, a single player turn can be played:
+        >>> game = hanabi.Game(players=2)
+        >>> game.turn()  # Alice will be asked to play
+        >>> game.turn()  # and now Benji
+
+        >>> # Same with an AI:
+        >>> game = hanabi.Game(players=2)
+        >>> ai = hanabi.ai.Cheater(game)
+        >>> game.turn(ai)  # the ai will play just once
     """
 
     Players = ["Alice", "Benji", "Clara", "Dante", "Elric"]
@@ -355,7 +364,7 @@ class Game:
 
         clue[0] is within (12345RBGWY).
         By default, the clue is given to the next player (backwards compatibility with 2 payers games).
-        If clue[1] is give it is the initial (ABCDE) or index (1234) oof the target player.
+        If clue[1] is given it is the initial (ABCDE) or index (1234) of the target player.
         """
 
         hint = clue[0].upper()  # so cr is valid to clue Red
@@ -409,7 +418,7 @@ class Game:
     def next_player(self):
         """Switch to next player.
 
-        Player 0 is *always* the current_player
+        Player 0 is *always* the current_player.
         """
 
         if self.current_player is None:   # called at game setup
