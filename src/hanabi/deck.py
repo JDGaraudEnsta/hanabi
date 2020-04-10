@@ -10,6 +10,7 @@ See also the program hanabi.
    Game
 """
 
+import os
 import copy
 import random
 import readline  # this greatly improves `input`
@@ -43,8 +44,13 @@ class Color(Enum):
         return 'Color.'+self.name
 
     def colorize(self, *args):
-        "Colorize the given string"
-        return '\033[%im'%self.value + ' '.join(map(str, args)) + '\033[0m'
+        "Colorize and convert to str the given args."
+        s = ' '.join(map(str, args))
+        if os.name == 'posix':
+            return '\033[%im'%self.value + s + '\033[0m'
+        else:
+            # sorry, no colors on windows for the moment
+            return s
 
 
 class Card:
