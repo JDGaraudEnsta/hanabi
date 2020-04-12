@@ -8,17 +8,15 @@ Use it with e.g.:
 from setuptools import setup, find_packages
 
 setup(
-    name = "hanabi",
-    version = "0.1.0",
-    packages = find_packages("."),
+    name="hanabi",
+    version="0.1.0",
+    packages=find_packages("."),
     scripts=['hanabi/hanabi'],
-    author = "JD. Garaud",
-    author_email = "jdgaraud@onera.fr",
-    description = "Hanabi game: CLI, GUI and AI",
+    author="JD. Garaud",
+    author_email="jdgaraud@onera.fr",
+    description="Hanabi game: CLI, GUI and AI",
     license="LGPL",
-    keywords = "Hanabi, game, GUI, AI",
-    url = "https://gitlab.ensta.fr/garaud/Hanabi",
+    keywords="Hanabi, game, GUI, AI",
+    url="https://gitlab.ensta.fr/garaud/Hanabi",
     # could also include long_description, download_url, classifiers, etc.
 )
-
-

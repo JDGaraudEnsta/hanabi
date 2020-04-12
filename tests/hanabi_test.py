@@ -2,14 +2,15 @@ import unittest
 import hanabi
 
 
-
 class ColorTest(unittest.TestCase):
     def test_str(self):
-        colors = [(31, "Red"), (32, "Green"), (34, "Blue"), (33, "Yellow"), (37, "White")]
-        trouve = True
+        colors = [(31, "Red"), (32, "Green"), (34, "Blue"),
+                  (33, "Yellow"), (37, "White")]
+        # trouve = True
         for (c, color) in colors:
             a = str(hanabi.deck.Color(c))
             self.assertEqual(a, color)
+
     def test_valid(self):
         for s in (54, 78, 46, 54, -5, 3):
             self.assertRaises(ValueError, hanabi.deck.Color, s)
@@ -27,14 +28,14 @@ class CardTest(unittest.TestCase):
         self.assertEqual(c1, string_card)
 
     def test_number(self):
-        #self.assertRaises(hanabi.deck.Card('R', 7),  AssertionError)
+        # elf.assertRaises(hanabi.deck.Card('R', 7),  AssertionError)
         with self.assertRaises(AssertionError):
             hanabi.deck.Card('R', 7)
     # TODO: itertools.product to test that all cards are possible
 
+
 class HandTest(unittest.TestCase):
     # test __special__ functions
-
 
     # test normal functions
     def setUp(self):
@@ -46,11 +47,12 @@ class HandTest(unittest.TestCase):
         self.hand3 = hanabi.deck.Hand(self.deck3, 1)
 
     def test_basic_hand(self):
-        self.assertEqual(str(self.hand3), hanabi.deck.Card(hanabi.deck.Color.Red, 1).str_color())
+        self.assertEqual(str(self.hand3), hanabi.deck.Card(
+            hanabi.deck.Color.Red, 1).str_color())
 
     def test_len(self):
         self.assertEqual(5, len(self.hand1))
-    
+
     def test_shuffle(self):
         self.deck1.shuffle()
         mem = str(self.deck1)[0:len(repr(self.hand1))]
@@ -58,19 +60,15 @@ class HandTest(unittest.TestCase):
         self.assertEqual(str(self.hand2), mem)
 
 
-
 class DeckTest(unittest.TestCase):
     # test __special__ functions
-    
 
     # test normal functions
     def setUp(self):
         pass
 
-
     def test_shuffle(self):
         pass
-
 
     def test_draw(self):
         pass
@@ -83,18 +81,17 @@ class DeckTest2(unittest.TestCase):
     pass
 
 
-
 class GameTest(unittest.TestCase):
 
     def setUp(self):
         self.unshuffled_game = hanabi.Game()
         self.random_game = hanabi.Game()
-        # ... group G here! 
+        # ... group G here!
         self.predefined_game = hanabi.Game()
         # ...
 
-
     # lines 193, 227
+
     def test_A1(self):
         game = hanabi.Game(2)
         game.quiet = True
@@ -104,28 +101,17 @@ class GameTest(unittest.TestCase):
     def test_B1(self):
         pass
 
-
     # lines 261, 295
     def test_play_R2_over_R1(self):
         pass
 
-
     # lines 295, 329
-
-
 
     # lines 329, 363
 
-    
-
     # lines 363, 397
 
-
-
     # lines 397, 431
-
-
-
 
 
 if __name__ == '__main__':

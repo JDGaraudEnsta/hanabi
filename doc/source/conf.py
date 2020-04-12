@@ -30,6 +30,7 @@
 # Add any Sphinx extension module names here, as strings. They can be
 # extensions coming with Sphinx (named 'sphinx.ext.*') or your custom
 # ones.
+import random
 extensions = [
     'sphinx.ext.autodoc',
     'sphinx.ext.autosummary',
@@ -133,7 +134,6 @@ agogo  bizstyle  default  haiku   pyramid  sphinxdoc
 basic  classic   epub     nature  scrolls  traditional
 cloud
 """.split()
-import random
 random.shuffle(_html_themes)
 html_theme = _html_themes.pop()
 
@@ -141,8 +141,7 @@ html_theme = _html_themes.pop()
 html_theme = 'nature'
 
 # cloud comes from `apt-get install python3-cloud-sptheme`
-print ("Theme is: ", html_theme)
-
+print("Theme is: ", html_theme)
 
 
 # Theme options are theme-specific and customize the look and feel of a theme
@@ -173,9 +172,10 @@ print ("Theme is: ", html_theme)
 html_logo = "../../src/icons/hanabi.png"
 
 # The name of an image file (relative to this directory) to use as a favicon of
-# the docs.  This file should be a Windows icon file (.ico) being 16x16 or 32x32
+# the docs.
+# This file should be a Windows icon file (.ico) being 16x16 or 32x32
 # pixels large.
-#
+
 html_favicon = "../../src/icons/hanabi.ico"
 
 # Add any paths that contain custom static files (such as style sheets) here,
@@ -193,7 +193,7 @@ html_static_path = ['_static']
 # bottom, using the given strftime format.
 # The empty string is equivalent to '%b %d, %Y'.
 #
-html_last_updated_fmt = "%b %d, %Y ("+html_theme+")"
+html_last_updated_fmt = "%b %d, %Y (" + html_theme + ")"
 
 # If true, SmartyPants will be used to convert quotes and dashes to
 # typographically correct entities.
@@ -266,21 +266,21 @@ htmlhelp_basename = 'Hanabidoc'
 # -- Options for LaTeX output ---------------------------------------------
 
 latex_elements = {
-     # The paper size ('letterpaper' or 'a4paper').
-     #
-     # 'papersize': 'letterpaper',
+    # The paper size ('letterpaper' or 'a4paper').
+    #
+    # 'papersize': 'letterpaper',
 
-     # The font size ('10pt', '11pt' or '12pt').
-     #
-     # 'pointsize': '10pt',
+    # The font size ('10pt', '11pt' or '12pt').
+    #
+    # 'pointsize': '10pt',
 
-     # Additional stuff for the LaTeX preamble.
-     #
-     # 'preamble': '',
+    # Additional stuff for the LaTeX preamble.
+    #
+    # 'preamble': '',
 
-     # Latex figure (float) alignment
-     #
-     # 'figure_align': 'htbp',
+    # Latex figure (float) alignment
+    #
+    # 'figure_align': 'htbp',
 }
 
 # Grouping the document tree into LaTeX files. List of tuples

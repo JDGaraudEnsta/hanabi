@@ -41,13 +41,13 @@ class Color(Enum):
         return self.name
 
     def __repr__(self):
-        return 'Color.'+self.name
+        return 'Color.' + self.name
 
     def colorize(self, *args):
         "Colorize and convert to str the given args."
         s = ' '.join(map(str, args))
         if os.name == 'posix':
-            return '\033[%im'%self.value + s + '\033[0m'
+            return '\033[%im' % self.value + s + '\033[0m'
         else:
             # sorry, no colors on windows for the moment
             return s
@@ -55,6 +55,7 @@ class Color(Enum):
 
 class Card:
     "A hanabi card."
+
     def __init__(self, color=None, number=None):
         assert (1 <= number <= 5), "Wrong number"
         self.color = color
@@ -66,7 +67,7 @@ class Card:
         return (str(self.color)[0] + str(self.number))
 
     def __repr__(self):
-        return ("Card(%r, %d)"%(self.color, self.number))
+        return ("Card(%r, %d)" % (self.color, self.number))
 
     def str_color(self):
         "Colorized string for this card."
@@ -87,6 +88,7 @@ class Hand:
     """A Hanabi hand, with n cards, drawn from the deck.
     Also used for the discard pile.
     """
+
     def __init__(self, deck, n=5):
         # TODO: see if it's easier to derive from list
         self.cards = []
@@ -106,8 +108,8 @@ class Hand:
     def pop(self, i):
         "Pop a card from the hand, and draw a new one."
         if not 1 <= i <= len(self):
-            raise ValueError("%d is not a valid card index."%i)
-        i = i-1   # back to 0-based-indices
+            raise ValueError("%d is not a valid card index." % i)
+        i = i - 1   # back to 0-based-indices
         card = self.cards.pop(i)
         try:
             self.cards.append(self._deck.draw())
@@ -115,11 +117,14 @@ class Hand:
             pass  # deck is empty
         return card
 
-    def append(self, c): self.cards.append(c)
+    def append(self, c):
+        self.cards.append(c)
 
-    def sort(self): self.cards.sort(key=str)
+    def sort(self):
+        self.cards.sort(key=str)
 
-    def __len__(self): return len(self.cards)
+    def __len__(self):
+        return len(self.cards)
 
 
 class Deck:
@@ -213,7 +218,6 @@ class Game:
         else:
             print(*args, **kwargs)
 
-
     def reset(self, players=2, multi=False, cards=None):
         "Reset this game."
         if isinstance(players, int):
@@ -234,16 +238,17 @@ class Game:
 
         self.current_player = None
         self.next_player()
-        self.last_player = None  # will be set to the last player, to allow last turn
 
-        self.discard_pile = Hand(None, 0)  # I don't give it the deck, so it can't draw accidentaly a card
-        self.piles = dict(zip(list(Color), [0]*len(Color)))
+        # will be set to the last player, to allow last turn
+        self.last_player = None
+        # I don't give it the deck, so it can't draw accidentaly a card
+        self.discard_pile = Hand(None, 0)
+        self.piles = dict(zip(list(Color), [0] * len(Color)))
 
         self.blue_coins = 8
         self.red_coins = 0
 
         self.ai = None
-
 
     def turn(self, _choice=None):
         """
@@ -266,8 +271,8 @@ class Game:
                  #               self.current_hand,
                  "\n      this is what you see:")
         for player, hand in zip(self.players[1:], self.hands[1:]):
-            self.log("%32s"%player, hand)
-            self.log(" "*32, hand.str_clue())
+            self.log("%32s" % player, hand)
+            self.log(" " * 32, hand.str_clue())
 
         self.log("""What do you want to play?
         (d)iscard a card (12345)
@@ -319,7 +324,6 @@ class Game:
             # StopIteration will stop the main loop!
             raise StopIteration()
 
-
     def discard(self, index):
         "Action: discard the given card from current hand (the first if index is an empty string)."
         try:
@@ -337,16 +341,17 @@ class Game:
         self.discard_pile.append(card)
         self.discard_pile.sort()
         self.log(self.current_player_name, "discards", card.str_color(),
-               "and now we have %d blue coins."%self.blue_coins)
+                 "and now we have %d blue coins." % self.blue_coins)
         self.next_player()
 
     def play(self, index):
         "Action: play the given card."
         icard = int(index)
         card = self.current_hand.pop(icard)
-        self.log(self.current_player_name, "tries to play", card, "... ", end="")
+        self.log(self.current_player_name,
+                 "tries to play", card, "... ", end="")
 
-        if (self.piles[card.color]+1 == card.number):
+        if (self.piles[card.color] + 1 == card.number):
             self.piles[card.color] += 1
             self.log("successfully!")
             self.log(card.color.colorize(
@@ -375,7 +380,7 @@ class Game:
 
         hint = clue[0].upper()  # so cr is valid to clue Red
         if hint not in "12345RBGWY":
-            raise ValueError("%s is not a valid clue."%hint)
+            raise ValueError("%s is not a valid clue." % hint)
         self.remove_blue_coin()  # will raise if no blue coin left
 
         try:
@@ -391,7 +396,8 @@ class Game:
 
         target_name = self.players[target_index]
 
-        self.log(self.current_player_name, "gives a clue", hint, "to", target_name)
+        self.log(self.current_player_name,
+                 "gives a clue", hint, "to", target_name)
         #  player = clue[1]  # if >=3 players
         for card in self.hands[target_index].cards:
             if hint in str(card):
@@ -408,15 +414,17 @@ class Game:
     def _bw_print_piles(self):
         self.log("    Discard:", self.discard_pile)
         for c in list(Color):
-            self.log("%6s"%c, "pile:", self.piles[c])
-        self.log("     Coins:", self.blue_coins, "blue,", self.red_coins, "red")
+            self.log("%6s" % c, "pile:", self.piles[c])
+        self.log("     Coins:", self.blue_coins,
+                 "blue,", self.red_coins, "red")
 
     def _color_print_piles(self):
         self.log("       Deck:", len(self.deck.cards))
         self.log("    Discard:", self.discard_pile)
         for c in list(Color):
-            self.log(c.colorize("%6s"%c, "pile:", self.piles[c]))
-        self.log("     Coins:", self.blue_coins, "blue,", self.red_coins, "red")
+            self.log(c.colorize("%6s" % c, "pile:", self.piles[c]))
+        self.log("     Coins:", self.blue_coins,
+                 "blue,", self.red_coins, "red")
 
     def print_piles(self):
         self._color_print_piles()
@@ -436,7 +444,7 @@ class Game:
             self.hands.append(self.hands.pop(0))
             self.players.append(self.players.pop(0))
 
-        self.current_player_name = '\033[1m%s\033[0m'%self.players[self.current_player]
+        self.current_player_name = '\033[1m%s\033[0m' % self.players[self.current_player]
         self.current_hand = self.hands[self.current_player]
 
         # other nice ideas: https://stackoverflow.com/questions/23416381/circular-list-iterator-in-python
@@ -444,7 +452,7 @@ class Game:
 
     def command(self, args):
         "Action: Run a python command from Hanabi (yes, it is a cheat code: self is the current Game)."
-        self.log('About to run `%s`'%args)
+        self.log('About to run `%s`' % args)
         try:
             exec(args)
         except Exception as e:
@@ -480,7 +488,7 @@ class Game:
         self.log("\nOne final glance at the table:")
         self.log(self.starting_deck)
         self.print_piles()
-        print("\nGoodbye. Your score is %d"%self.score)
+        print("\nGoodbye. Your score is %d" % self.score)
 
     def save(self, filename):
         """Save starting deck and list of moves."""
@@ -489,9 +497,9 @@ class Game:
 players = %r
 cards = %r
 moves = %r
-"""%(self.players,
-     self.starting_deck,
-     self.moves))
+""" % (self.players,
+            self.starting_deck,
+            self.moves))
         # fixme: seems that a deck's repr is its list of cards?
 
     def load(self, filename):

@@ -3,8 +3,10 @@
 import hanabi
 import argparse
 
+
 def silent(*args, **kwargs):
     pass
+
 
 parser = argparse.ArgumentParser(
     description='Play a game of Hanabi.')
@@ -13,7 +15,8 @@ parser = argparse.ArgumentParser(
 parser.add_argument("-n", type=int, default=2, help='number of players')
 parser.add_argument("--load", "-l", type=str, help='load a replay game')
 parser.add_argument("--ai", type=str, help='players are controlled by this AI')
-parser.add_argument("-q", "--quiet", action='store_true', help='Quiet mode, only the final score is displayed (requires --ai, or --load, obviously)')
+parser.add_argument("-q", "--quiet", action='store_true',
+                    help='Quiet mode, only the final score is displayed (requires an ai, obviously)')
 
 args = parser.parse_args()
 
@@ -22,10 +25,10 @@ if args.quiet:
 
 print(args)
 
-print ("\nLet's start a new game")
+print("\nLet's start a new game")
 game = hanabi.Game(args.n)
-print ("Here are the hands:")
-print (game.hands)
+print("Here are the hands:")
+print(game.hands)
 
 if args.ai:
     game.ai = getattr(hanabi.ai, args.ai)(game)

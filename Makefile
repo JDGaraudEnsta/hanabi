@@ -6,30 +6,27 @@ help:
 	@echo "Available targets:"
 	@echo "  module, install - build and install hanabi python3 module"
 	@echo "  doc             - build the module's documentation"
-	@echo "  test            - run the non-regression and validation tests"
 	@echo "  all             - do all 3 previous targets"
 	@echo "  clean           - remove compilation residual files"
 	@echo "  distclean, uninstall - clean, then remove the module"
 
 
-all: module doc test
+all: module doc
 
 
 module:
-	cd src && python3 setup.py install --user
+	pip3 install -r requirements.txt
+	pip3 install -e src
+
 install: module
 
 doc: README.html module
 	cd doc && make html
 
-test:
-	cd test && ./run_tests.sh
-	@echo All tests are ok
-
 clean:
 	cd doc && make clean
 	cd src && rm -rf build/ dist/ hanabi.egg-info/
-	cd test && rm -f *.log autosave.py *~
+	cd tests && rm -f *.log autosave.py *~
 
 distclean: clean
 	-pip3 uninstall -y hanabi
