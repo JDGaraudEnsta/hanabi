@@ -56,9 +56,11 @@ During the project:
 
 ## Installation
 
+### For Linux and Mac:
 
     git clone https://github.com/JDGaraudEnsta/hanabi
     cd hanabi
+    git pull
     make        # pip installs it in the default directory ~/.local
     hanabi
     # and now you may play
@@ -68,14 +70,15 @@ If `hanabi` doesn't start (`bash: hanabi: command not found`), add this to your 
 
     export PATH=$HOME/.local/bin:$PATH
 
-For 
-
-### Windows
+### For Windows, first dependencies:
 
     pip install pyreadline
-    cd src
-    python3 setup.py install --user
+
+then the installation:
     
+    cd hanabi/src
+    python3 setup.py install --user
+
     
 
 
