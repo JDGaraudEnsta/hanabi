@@ -1,0 +1,630 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>hanabi.deck &#8212; Hanabi 0.1.0 documentation</title>
+    <link rel="stylesheet" href="../../_static/nature.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    <script type="text/javascript" id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
+    <script type="text/javascript" src="../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../_static/doctools.js"></script>
+    <script type="text/javascript" src="../../_static/language_data.js"></script>
+    <link rel="shortcut icon" href="../../_static/hanabi.ico"/>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" /> 
+  </head><body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../../index.html">Hanabi 0.1.0 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../index.html" accesskey="U">Module code</a> &#187;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <h1>Source code for hanabi.deck</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">Hanabi deck and game engine module.</span>
+
+<span class="sd">See also the program hanabi.</span>
+
+<span class="sd">.. autosummary::</span>
+<span class="sd">   Card</span>
+<span class="sd">   Hand</span>
+<span class="sd">   Deck</span>
+<span class="sd">   Game</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="kn">import</span> <span class="nn">copy</span>
+<span class="kn">import</span> <span class="nn">random</span>
+<span class="kn">import</span> <span class="nn">readline</span>  <span class="c1"># this greatly improves `input`</span>
+
+<span class="kn">from</span> <span class="nn">enum</span> <span class="k">import</span> <span class="n">Enum</span>
+<span class="kn">from</span> <span class="nn">enum</span> <span class="k">import</span> <span class="n">unique</span>
+
+<span class="kn">from</span> <span class="nn">.</span> <span class="k">import</span> <span class="n">ascii_art</span>
+<span class="kn">from</span> <span class="nn">.</span> <span class="k">import</span> <span class="n">ai</span>
+
+
+<div class="viewcode-block" id="Color"><a class="viewcode-back" href="../../index.html#hanabi.deck.Color">[docs]</a><span class="nd">@unique</span>
+<span class="k">class</span> <span class="nc">Color</span><span class="p">(</span><span class="n">Enum</span><span class="p">):</span>
+    <span class="s2">&quot;Card colors. Int values correspond to xterm&#39;s.&quot;</span>
+    <span class="n">Red</span> <span class="o">=</span> <span class="mi">31</span>
+    <span class="n">Blue</span> <span class="o">=</span> <span class="mi">34</span>
+    <span class="n">Green</span> <span class="o">=</span> <span class="mi">32</span>
+    <span class="n">White</span> <span class="o">=</span> <span class="mi">37</span>
+    <span class="n">Yellow</span> <span class="o">=</span> <span class="mi">33</span>
+    <span class="c1"># Red = 41</span>
+    <span class="c1"># Blue = 44</span>
+    <span class="c1"># Green = 42</span>
+    <span class="c1"># White = 47</span>
+    <span class="c1"># Yellow = 43</span>
+<span class="c1">#    Multi = 6</span>
+
+    <span class="k">def</span> <span class="nf">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">name</span>
+
+    <span class="k">def</span> <span class="nf">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="s1">&#39;Color.&#39;</span><span class="o">+</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span>
+
+<div class="viewcode-block" id="Color.colorize"><a class="viewcode-back" href="../../index.html#hanabi.deck.Color.colorize">[docs]</a>    <span class="k">def</span> <span class="nf">colorize</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">):</span>
+        <span class="s2">&quot;Colorize the given string&quot;</span>
+        <span class="k">return</span> <span class="s1">&#39;</span><span class="se">\033</span><span class="s1">[</span><span class="si">%i</span><span class="s1">m&#39;</span><span class="o">%</span><span class="bp">self</span><span class="o">.</span><span class="n">value</span> <span class="o">+</span> <span class="s1">&#39; &#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="nb">map</span><span class="p">(</span><span class="nb">str</span><span class="p">,</span> <span class="n">args</span><span class="p">))</span> <span class="o">+</span> <span class="s1">&#39;</span><span class="se">\033</span><span class="s1">[0m&#39;</span></div></div>
+
+
+<div class="viewcode-block" id="Card"><a class="viewcode-back" href="../../index.html#hanabi.deck.Card">[docs]</a><span class="k">class</span> <span class="nc">Card</span><span class="p">:</span>
+    <span class="s2">&quot;A hanabi card.&quot;</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">number</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="k">assert</span> <span class="p">(</span><span class="mi">1</span> <span class="o">&lt;=</span> <span class="n">number</span> <span class="o">&lt;=</span> <span class="mi">5</span><span class="p">),</span> <span class="s2">&quot;Wrong number&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">color</span> <span class="o">=</span> <span class="n">color</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">number</span> <span class="o">=</span> <span class="n">number</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">color_clue</span> <span class="o">=</span> <span class="kc">False</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">number_clue</span> <span class="o">=</span> <span class="kc">False</span>
+
+    <span class="k">def</span> <span class="nf">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">color</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">number</span><span class="p">))</span>
+
+    <span class="k">def</span> <span class="nf">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="p">(</span><span class="s2">&quot;Card(</span><span class="si">%r</span><span class="s2">, </span><span class="si">%d</span><span class="s2">)&quot;</span><span class="o">%</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">color</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">number</span><span class="p">))</span>
+
+<div class="viewcode-block" id="Card.str_color"><a class="viewcode-back" href="../../index.html#hanabi.deck.Card.str_color">[docs]</a>    <span class="k">def</span> <span class="nf">str_color</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="s2">&quot;Colorized string for this card.&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">color</span><span class="o">.</span><span class="n">colorize</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="p">))</span></div>
+
+    <span class="k">def</span> <span class="nf">__eq__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">c</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Return whether 2 cards are equal.</span>
+<span class="sd">        Can compare 2 Card objects or their string value.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">==</span> <span class="nb">str</span><span class="p">(</span><span class="n">c</span><span class="p">)</span>
+
+<div class="viewcode-block" id="Card.str_clue"><a class="viewcode-back" href="../../index.html#hanabi.deck.Card.str_clue">[docs]</a>    <span class="k">def</span> <span class="nf">str_clue</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="s2">&quot;What I know about this card.&quot;</span>
+        <span class="k">return</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">color_clue</span> <span class="ow">or</span> <span class="s1">&#39;*&#39;</span><span class="p">)</span> <span class="o">+</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">number_clue</span> <span class="ow">or</span> <span class="s1">&#39;*&#39;</span><span class="p">)</span></div></div>
+
+
+<div class="viewcode-block" id="Hand"><a class="viewcode-back" href="../../index.html#hanabi.deck.Hand">[docs]</a><span class="k">class</span> <span class="nc">Hand</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;A Hanabi hand, with n cards, drawn from the deck.</span>
+<span class="sd">    Also used for the discard pile.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">deck</span><span class="p">,</span> <span class="n">n</span><span class="o">=</span><span class="mi">5</span><span class="p">):</span>
+        <span class="c1"># TODO: see if it&#39;s easier to derive from list</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">cards</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">cards</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">deck</span><span class="o">.</span><span class="n">draw</span><span class="p">())</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_deck</span> <span class="o">=</span> <span class="n">deck</span>  <span class="c1"># not sure if I need it</span>
+
+    <span class="k">def</span> <span class="nf">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="s2">&quot; &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">([</span><span class="n">c</span><span class="o">.</span><span class="n">str_color</span><span class="p">()</span> <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">cards</span><span class="p">])</span>
+
+    <span class="k">def</span> <span class="nf">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+
+<div class="viewcode-block" id="Hand.str_clue"><a class="viewcode-back" href="../../index.html#hanabi.deck.Hand.str_clue">[docs]</a>    <span class="k">def</span> <span class="nf">str_clue</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="s2">&quot; &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">([</span><span class="n">c</span><span class="o">.</span><span class="n">str_clue</span><span class="p">()</span> <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">cards</span><span class="p">])</span></div>
+
+<div class="viewcode-block" id="Hand.pop"><a class="viewcode-back" href="../../index.html#hanabi.deck.Hand.pop">[docs]</a>    <span class="k">def</span> <span class="nf">pop</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">i</span><span class="p">):</span>
+        <span class="s2">&quot;Pop a card from the hand, and draw a new one.&quot;</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="mi">1</span> <span class="o">&lt;=</span> <span class="n">i</span> <span class="o">&lt;=</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;</span><span class="si">%d</span><span class="s2"> is not a valid card index.&quot;</span><span class="o">%</span><span class="n">i</span><span class="p">)</span>
+        <span class="n">i</span> <span class="o">=</span> <span class="n">i</span><span class="o">-</span><span class="mi">1</span>   <span class="c1"># back to 0-based-indices</span>
+        <span class="n">card</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">cards</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="n">i</span><span class="p">)</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">cards</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_deck</span><span class="o">.</span><span class="n">draw</span><span class="p">())</span>
+        <span class="k">except</span> <span class="ne">IndexError</span><span class="p">:</span>
+            <span class="k">pass</span>  <span class="c1"># deck is empty</span>
+        <span class="k">return</span> <span class="n">card</span></div>
+
+<div class="viewcode-block" id="Hand.append"><a class="viewcode-back" href="../../index.html#hanabi.deck.Hand.append">[docs]</a>    <span class="k">def</span> <span class="nf">append</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">c</span><span class="p">):</span> <span class="bp">self</span><span class="o">.</span><span class="n">cards</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">c</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="Hand.sort"><a class="viewcode-back" href="../../index.html#hanabi.deck.Hand.sort">[docs]</a>    <span class="k">def</span> <span class="nf">sort</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span> <span class="bp">self</span><span class="o">.</span><span class="n">cards</span><span class="o">.</span><span class="n">sort</span><span class="p">(</span><span class="n">key</span><span class="o">=</span><span class="nb">str</span><span class="p">)</span></div>
+
+    <span class="k">def</span> <span class="nf">__len__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span> <span class="k">return</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">cards</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="Deck"><a class="viewcode-back" href="../../index.html#hanabi.deck.Deck">[docs]</a><span class="k">class</span> <span class="nc">Deck</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    A Hanabi deck of cards (50 cards).</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># Rules for making decks:</span>
+    <span class="n">card_count</span> <span class="o">=</span> <span class="p">{</span><span class="mi">1</span><span class="p">:</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">2</span><span class="p">:</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">:</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">4</span><span class="p">:</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">5</span><span class="p">:</span> <span class="mi">1</span><span class="p">}</span>
+    <span class="c1"># Rules for dealing:</span>
+    <span class="n">cards_by_player</span> <span class="o">=</span> <span class="p">{</span><span class="mi">2</span><span class="p">:</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">3</span><span class="p">:</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">4</span><span class="p">:</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">5</span><span class="p">:</span> <span class="mi">4</span><span class="p">}</span>
+
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">cards</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">cards</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">cards</span> <span class="o">=</span> <span class="p">[]</span>
+            <span class="k">for</span> <span class="n">number</span><span class="p">,</span> <span class="n">count</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">card_count</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+                <span class="k">for</span> <span class="n">color</span> <span class="ow">in</span> <span class="nb">list</span><span class="p">(</span><span class="n">Color</span><span class="p">):</span>
+                    <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">count</span><span class="p">):</span>
+                        <span class="bp">self</span><span class="o">.</span><span class="n">cards</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">Card</span><span class="p">(</span><span class="n">color</span><span class="p">,</span> <span class="n">number</span><span class="p">))</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">cards</span> <span class="o">=</span> <span class="n">cards</span>
+
+    <span class="k">def</span> <span class="nf">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="s2">&quot; &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">([</span><span class="n">c</span><span class="o">.</span><span class="n">str_color</span><span class="p">()</span> <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">cards</span><span class="p">])</span>
+
+    <span class="k">def</span> <span class="nf">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">s</span> <span class="o">=</span> <span class="s1">&#39;[&#39;</span>
+        <span class="n">s</span> <span class="o">+=</span> <span class="s2">&quot;, &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="nb">map</span><span class="p">(</span><span class="nb">repr</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">cards</span><span class="p">))</span>
+        <span class="n">s</span> <span class="o">+=</span> <span class="s1">&#39;]&#39;</span>
+        <span class="k">return</span> <span class="n">s</span>
+
+<div class="viewcode-block" id="Deck.shuffle"><a class="viewcode-back" href="../../index.html#hanabi.deck.Deck.shuffle">[docs]</a>    <span class="k">def</span> <span class="nf">shuffle</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">random</span><span class="o">.</span><span class="n">shuffle</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">cards</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="Deck.draw"><a class="viewcode-back" href="../../index.html#hanabi.deck.Deck.draw">[docs]</a>    <span class="k">def</span> <span class="nf">draw</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="s2">&quot;Draw a card from the deck.&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">cards</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="Deck.deal"><a class="viewcode-back" href="../../index.html#hanabi.deck.Deck.deal">[docs]</a>    <span class="k">def</span> <span class="nf">deal</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">nhands</span><span class="p">):</span>
+        <span class="s2">&quot;Deal n hands and return them.&quot;</span>
+        <span class="n">hands</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">nhands</span><span class="p">):</span>
+            <span class="n">hands</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">Hand</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">cards_by_player</span><span class="p">[</span><span class="n">nhands</span><span class="p">]))</span>
+        <span class="k">return</span> <span class="n">hands</span></div></div>
+
+
+<div class="viewcode-block" id="Game"><a class="viewcode-back" href="../../index.html#hanabi.deck.Game">[docs]</a><span class="k">class</span> <span class="nc">Game</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;A game of Hanabi.</span>
+
+<span class="sd">    Usage:</span>
+
+<span class="sd">        &gt;&gt;&gt; import hanabi</span>
+<span class="sd">        &gt;&gt;&gt; game = hanabi.Game(players=2)</span>
+<span class="sd">        &gt;&gt;&gt; game.run()    # users play a whole game</span>
+
+<span class="sd">        &gt;&gt;&gt; # if an AI is set, it will play the game automatically:</span>
+<span class="sd">        &gt;&gt;&gt; ai = hanabi.ai.Cheater(game)</span>
+<span class="sd">        &gt;&gt;&gt; game.ai = ai</span>
+<span class="sd">        &gt;&gt;&gt; game.run()</span>
+
+<span class="sd">        &gt;&gt;&gt; # For debugging, a single player turn can be played:</span>
+<span class="sd">        &gt;&gt;&gt; game = hanabi.Game(players=2)</span>
+<span class="sd">        &gt;&gt;&gt; game.turn()  # Alice will be asked to play</span>
+<span class="sd">        &gt;&gt;&gt; game.turn()  # and now Benji</span>
+
+<span class="sd">        &gt;&gt;&gt; # Same with an AI:</span>
+<span class="sd">        &gt;&gt;&gt; game = hanabi.Game(players=2)</span>
+<span class="sd">        &gt;&gt;&gt; ai = hanabi.ai.Cheater(game)</span>
+<span class="sd">        &gt;&gt;&gt; game.turn(ai)  # the ai will play just once</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">Players</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;Alice&quot;</span><span class="p">,</span> <span class="s2">&quot;Benji&quot;</span><span class="p">,</span> <span class="s2">&quot;Clara&quot;</span><span class="p">,</span> <span class="s2">&quot;Dante&quot;</span><span class="p">,</span> <span class="s2">&quot;Elric&quot;</span><span class="p">]</span>
+
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">players</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">multi</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+        <span class="c1"># Actions are functions that a player may do.</span>
+        <span class="c1"># They should finish by a call to next_player, if needed.</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">actions</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s1">&#39;d&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">discard</span><span class="p">,</span>
+            <span class="s1">&#39;p&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">play</span><span class="p">,</span>
+            <span class="s1">&#39;c&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">clue</span><span class="p">,</span>
+            <span class="s1">&#39;x&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">examine_piles</span><span class="p">,</span>
+            <span class="s1">&#39;l&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">load</span><span class="p">,</span>
+            <span class="s1">&#39;&gt;&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">command</span><span class="p">,</span>  <span class="c1"># cheat-code !</span>
+            <span class="s1">&#39;?&#39;</span><span class="p">:</span> <span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">ai</span><span class="o">.</span><span class="n">Cheater</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">play</span><span class="p">()))</span>
+        <span class="p">}</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">reset</span><span class="p">(</span><span class="n">players</span><span class="p">,</span> <span class="n">multi</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">quiet</span> <span class="o">=</span> <span class="kc">False</span>
+
+<div class="viewcode-block" id="Game.log"><a class="viewcode-back" href="../../index.html#hanabi.deck.Game.log">[docs]</a>    <span class="k">def</span> <span class="nf">log</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">quiet</span><span class="p">:</span>
+            <span class="k">pass</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="Game.reset"><a class="viewcode-back" href="../../index.html#hanabi.deck.Game.reset">[docs]</a>    <span class="k">def</span> <span class="nf">reset</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">players</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">multi</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">cards</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="s2">&quot;Reset this game.&quot;</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">players</span><span class="p">,</span> <span class="nb">int</span><span class="p">):</span>
+            <span class="k">assert</span><span class="p">(</span><span class="mi">2</span> <span class="o">&lt;=</span> <span class="n">players</span> <span class="o">&lt;=</span> <span class="mi">5</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">players</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">Players</span><span class="p">[:</span><span class="n">players</span><span class="p">]</span>
+        <span class="k">else</span><span class="p">:</span>  <span class="c1"># assume it&#39;s the list of players</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">players</span> <span class="o">=</span> <span class="n">players</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">deck</span> <span class="o">=</span> <span class="n">Deck</span><span class="p">(</span><span class="n">cards</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">cards</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">deck</span><span class="o">.</span><span class="n">shuffle</span><span class="p">()</span>
+
+        <span class="c1"># record starting deck and moves, for replay</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">moves</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">starting_deck</span> <span class="o">=</span> <span class="n">copy</span><span class="o">.</span><span class="n">deepcopy</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">deck</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">hands</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">deck</span><span class="o">.</span><span class="n">deal</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">players</span><span class="p">))</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">current_player</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">next_player</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">last_player</span> <span class="o">=</span> <span class="kc">None</span>  <span class="c1"># will be set to the last player, to allow last turn</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">discard_pile</span> <span class="o">=</span> <span class="n">Hand</span><span class="p">(</span><span class="kc">None</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>  <span class="c1"># I don&#39;t give it the deck, so it can&#39;t draw accidentaly a card</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">piles</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="nb">zip</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="n">Color</span><span class="p">),</span> <span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">*</span><span class="nb">len</span><span class="p">(</span><span class="n">Color</span><span class="p">)))</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">blue_coins</span> <span class="o">=</span> <span class="mi">8</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">red_coins</span> <span class="o">=</span> <span class="mi">0</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">ai</span> <span class="o">=</span> <span class="kc">None</span></div>
+
+
+<div class="viewcode-block" id="Game.turn"><a class="viewcode-back" href="../../index.html#hanabi.deck.Game.turn">[docs]</a>    <span class="k">def</span> <span class="nf">turn</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">_choice</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Play one round: ask the player what she wants to do, then update the game.</span>
+<span class="sd">        If _choice is not None, play it instead of asking.</span>
+
+<span class="sd">        Note:</span>
+
+<span class="sd">          If provided, _choice can be:</span>
+<span class="sd">           - None: the human will be prompted</span>
+<span class="sd">           - a (str), which is played</span>
+<span class="sd">           - an AI object (we will play what its function play() suggests)</span>
+<span class="sd">           - a list of actions, because I chose to</span>
+<span class="sd">             record invalid actions too (and these loop within this file).</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">log</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">current_player_name</span><span class="p">,</span>
+                 <span class="s2">&quot;this is what you remember:&quot;</span><span class="p">,</span>
+                 <span class="bp">self</span><span class="o">.</span><span class="n">current_hand</span><span class="o">.</span><span class="n">str_clue</span><span class="p">(),</span>
+                 <span class="c1">#               self.current_hand,</span>
+                 <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">      this is what you see:&quot;</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">player</span><span class="p">,</span> <span class="n">hand</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">players</span><span class="p">[</span><span class="mi">1</span><span class="p">:],</span> <span class="bp">self</span><span class="o">.</span><span class="n">hands</span><span class="p">[</span><span class="mi">1</span><span class="p">:]):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="s2">&quot;</span><span class="si">%32s</span><span class="s2">&quot;</span><span class="o">%</span><span class="n">player</span><span class="p">,</span> <span class="n">hand</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="s2">&quot; &quot;</span><span class="o">*</span><span class="mi">32</span><span class="p">,</span> <span class="n">hand</span><span class="o">.</span><span class="n">str_clue</span><span class="p">())</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="s2">&quot;&quot;&quot;What do you want to play?</span>
+<span class="s2">        (d)iscard a card (12345)</span>
+<span class="s2">        give a (c)lue (RBGWY 12345)</span>
+<span class="s2">        (p)lay a card (12345)</span>
+<span class="s2">        e(x)amine the piles&quot;&quot;&quot;</span><span class="p">)</span>
+
+        <span class="c1"># ai.Cheater(self).play()</span>
+
+        <span class="k">while</span> <span class="kc">True</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">_choice</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="n">choice</span> <span class="o">=</span> <span class="nb">input</span><span class="p">(</span><span class="s2">&quot;hanabi&gt; &quot;</span><span class="p">)</span>
+                <span class="k">if</span> <span class="n">choice</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span> <span class="o">==</span> <span class="s1">&#39;&#39;</span><span class="p">:</span>
+                    <span class="k">continue</span>
+            <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">_choice</span><span class="p">,</span> <span class="n">ai</span><span class="o">.</span><span class="n">AI</span><span class="p">):</span>
+                <span class="n">choice</span> <span class="o">=</span> <span class="n">_choice</span><span class="o">.</span><span class="n">play</span><span class="p">()</span>
+            <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">_choice</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+                <span class="n">choice</span> <span class="o">=</span> <span class="n">_choice</span>
+            <span class="k">else</span><span class="p">:</span>  <span class="c1"># assume it is a list</span>
+                <span class="n">choice</span> <span class="o">=</span> <span class="n">_choice</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="s1">&#39;hanabi (auto)&gt;&#39;</span><span class="p">,</span> <span class="n">choice</span><span class="p">)</span>
+            <span class="c1"># so here, choice is a 2 or 3 letters code:</span>
+            <span class="c1">#  d2 (discard 2nd card)</span>
+            <span class="c1">#  cR (give Red clue) ... will become cRA (give Red to Alice)</span>
+            <span class="c1">#  p5 (play 5th card)</span>
+
+            <span class="bp">self</span><span class="o">.</span><span class="n">moves</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">choice</span><span class="p">)</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">actions</span><span class="p">[</span><span class="n">choice</span><span class="p">[</span><span class="mi">0</span><span class="p">]](</span><span class="n">choice</span><span class="p">[</span><span class="mi">1</span><span class="p">:])</span>
+                <span class="k">return</span>
+            <span class="k">except</span> <span class="ne">KeyError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">e</span><span class="p">,</span> <span class="s2">&quot;is not a valid action. Try again.&quot;</span><span class="p">)</span>
+            <span class="k">except</span> <span class="p">(</span><span class="ne">ValueError</span><span class="p">,</span> <span class="ne">IndexError</span><span class="p">)</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">e</span><span class="p">,</span> <span class="s2">&quot;Try again&quot;</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="Game.add_blue_coin"><a class="viewcode-back" href="../../index.html#hanabi.deck.Game.add_blue_coin">[docs]</a>    <span class="k">def</span> <span class="nf">add_blue_coin</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">blue_coins</span> <span class="o">==</span> <span class="mi">8</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Already 8 blue coins. Can&#39;t get an extra one.&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">blue_coins</span> <span class="o">+=</span> <span class="mi">1</span></div>
+
+<div class="viewcode-block" id="Game.remove_blue_coin"><a class="viewcode-back" href="../../index.html#hanabi.deck.Game.remove_blue_coin">[docs]</a>    <span class="k">def</span> <span class="nf">remove_blue_coin</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">blue_coins</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;No blue coin left.&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">blue_coins</span> <span class="o">-=</span> <span class="mi">1</span></div>
+
+<div class="viewcode-block" id="Game.add_red_coin"><a class="viewcode-back" href="../../index.html#hanabi.deck.Game.add_red_coin">[docs]</a>    <span class="k">def</span> <span class="nf">add_red_coin</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">red_coins</span> <span class="o">+=</span> <span class="mi">1</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">red_coins</span> <span class="o">==</span> <span class="mi">3</span><span class="p">:</span>
+            <span class="c1"># StopIteration will stop the main loop!</span>
+            <span class="k">raise</span> <span class="ne">StopIteration</span><span class="p">()</span></div>
+
+
+<div class="viewcode-block" id="Game.discard"><a class="viewcode-back" href="../../index.html#hanabi.deck.Game.discard">[docs]</a>    <span class="k">def</span> <span class="nf">discard</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">index</span><span class="p">):</span>
+        <span class="s2">&quot;Action: discard the given card from current hand (the first if index is an empty string).&quot;</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">index</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span> <span class="o">==</span> <span class="s2">&quot;&quot;</span><span class="p">:</span>
+                <span class="n">index</span> <span class="o">=</span> <span class="s2">&quot;1&quot;</span>
+        <span class="k">except</span> <span class="ne">Exception</span><span class="p">:</span>
+            <span class="k">pass</span>
+        <span class="n">icard</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">index</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">add_blue_coin</span><span class="p">()</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">card</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">current_hand</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="n">icard</span><span class="p">)</span>
+        <span class="k">except</span> <span class="ne">ValueError</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">remove_blue_coin</span><span class="p">()</span>
+            <span class="k">raise</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">discard_pile</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">card</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">discard_pile</span><span class="o">.</span><span class="n">sort</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">current_player_name</span><span class="p">,</span> <span class="s2">&quot;discards&quot;</span><span class="p">,</span> <span class="n">card</span><span class="o">.</span><span class="n">str_color</span><span class="p">(),</span>
+               <span class="s2">&quot;and now we have </span><span class="si">%d</span><span class="s2"> blue coins.&quot;</span><span class="o">%</span><span class="bp">self</span><span class="o">.</span><span class="n">blue_coins</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">next_player</span><span class="p">()</span></div>
+
+<div class="viewcode-block" id="Game.play"><a class="viewcode-back" href="../../index.html#hanabi.deck.Game.play">[docs]</a>    <span class="k">def</span> <span class="nf">play</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">index</span><span class="p">):</span>
+        <span class="s2">&quot;Action: play the given card.&quot;</span>
+        <span class="n">icard</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">index</span><span class="p">)</span>
+        <span class="n">card</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">current_hand</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="n">icard</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">current_player_name</span><span class="p">,</span> <span class="s2">&quot;tries to play&quot;</span><span class="p">,</span> <span class="n">card</span><span class="p">,</span> <span class="s2">&quot;... &quot;</span><span class="p">,</span> <span class="n">end</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">piles</span><span class="p">[</span><span class="n">card</span><span class="o">.</span><span class="n">color</span><span class="p">]</span><span class="o">+</span><span class="mi">1</span> <span class="o">==</span> <span class="n">card</span><span class="o">.</span><span class="n">number</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">piles</span><span class="p">[</span><span class="n">card</span><span class="o">.</span><span class="n">color</span><span class="p">]</span> <span class="o">+=</span> <span class="mi">1</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="s2">&quot;successfully!&quot;</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">card</span><span class="o">.</span><span class="n">color</span><span class="o">.</span><span class="n">colorize</span><span class="p">(</span>
+                <span class="n">ascii_art</span><span class="o">.</span><span class="n">fireworks</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">piles</span><span class="p">[</span><span class="n">card</span><span class="o">.</span><span class="n">color</span><span class="p">]]))</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">piles</span><span class="p">[</span><span class="n">card</span><span class="o">.</span><span class="n">color</span><span class="p">]</span> <span class="o">==</span> <span class="mi">5</span><span class="p">:</span>
+                <span class="k">try</span><span class="p">:</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">add_blue_coin</span><span class="p">()</span>
+                <span class="k">except</span> <span class="ne">ValueError</span><span class="p">:</span>  <span class="c1"># it is valid to play a 5 when we have 8 coins. It is simply lost</span>
+                    <span class="k">pass</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="c1"># misplay!</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">discard_pile</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">card</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="s2">&quot;That was a bad idea!&quot;</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">ascii_art</span><span class="o">.</span><span class="n">kaboom</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">add_red_coin</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">print_piles</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">next_player</span><span class="p">()</span></div>
+
+<div class="viewcode-block" id="Game.clue"><a class="viewcode-back" href="../../index.html#hanabi.deck.Game.clue">[docs]</a>    <span class="k">def</span> <span class="nf">clue</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">clue</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Action: give a clue.</span>
+
+<span class="sd">        clue[0] is within (12345RBGWY).</span>
+<span class="sd">        By default, the clue is given to the next player (backwards compatibility with 2 payers games).</span>
+<span class="sd">        If clue[1] is given it is the initial (ABCDE) or index (1234) of the target player.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="n">hint</span> <span class="o">=</span> <span class="n">clue</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">upper</span><span class="p">()</span>  <span class="c1"># so cr is valid to clue Red</span>
+        <span class="k">if</span> <span class="n">hint</span> <span class="ow">not</span> <span class="ow">in</span> <span class="s2">&quot;12345RBGWY&quot;</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;</span><span class="si">%s</span><span class="s2"> is not a valid clue.&quot;</span><span class="o">%</span><span class="n">hint</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">remove_blue_coin</span><span class="p">()</span>  <span class="c1"># will raise if no blue coin left</span>
+
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">target_index</span> <span class="o">=</span> <span class="n">clue</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+            <span class="k">if</span> <span class="n">target_index</span> <span class="ow">in</span> <span class="s1">&#39;ABCDE&#39;</span><span class="p">:</span>
+                <span class="n">short_names</span> <span class="o">=</span> <span class="p">[</span><span class="n">name</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="k">for</span> <span class="n">name</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">players</span><span class="p">]</span>
+                <span class="n">target_index</span> <span class="o">=</span> <span class="n">short_names</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="n">target_index</span><span class="p">)</span>
+        <span class="k">except</span> <span class="ne">IndexError</span><span class="p">:</span>
+            <span class="n">target_index</span> <span class="o">=</span> <span class="mi">1</span>
+        <span class="n">target_index</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">target_index</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">target_index</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Cannot give a clue to yourself.&quot;</span><span class="p">)</span>
+
+        <span class="n">target_name</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">players</span><span class="p">[</span><span class="n">target_index</span><span class="p">]</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">current_player_name</span><span class="p">,</span> <span class="s2">&quot;gives a clue&quot;</span><span class="p">,</span> <span class="n">hint</span><span class="p">,</span> <span class="s2">&quot;to&quot;</span><span class="p">,</span> <span class="n">target_name</span><span class="p">)</span>
+        <span class="c1">#  player = clue[1]  # if &gt;=3 players</span>
+        <span class="k">for</span> <span class="n">card</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">hands</span><span class="p">[</span><span class="n">target_index</span><span class="p">]</span><span class="o">.</span><span class="n">cards</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">hint</span> <span class="ow">in</span> <span class="nb">str</span><span class="p">(</span><span class="n">card</span><span class="p">):</span>
+                <span class="k">if</span> <span class="n">hint</span> <span class="ow">in</span> <span class="s2">&quot;12345&quot;</span><span class="p">:</span>
+                    <span class="n">card</span><span class="o">.</span><span class="n">number_clue</span> <span class="o">=</span> <span class="n">hint</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">card</span><span class="o">.</span><span class="n">color_clue</span> <span class="o">=</span> <span class="n">hint</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">next_player</span><span class="p">()</span></div>
+
+<div class="viewcode-block" id="Game.examine_piles"><a class="viewcode-back" href="../../index.html#hanabi.deck.Game.examine_piles">[docs]</a>    <span class="k">def</span> <span class="nf">examine_piles</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">unused</span><span class="p">):</span>
+        <span class="s2">&quot;Action: look at the table.&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">print_piles</span><span class="p">()</span></div>
+
+    <span class="k">def</span> <span class="nf">_bw_print_piles</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="s2">&quot;    Discard:&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">discard_pile</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="nb">list</span><span class="p">(</span><span class="n">Color</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="s2">&quot;</span><span class="si">%6s</span><span class="s2">&quot;</span><span class="o">%</span><span class="n">c</span><span class="p">,</span> <span class="s2">&quot;pile:&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">piles</span><span class="p">[</span><span class="n">c</span><span class="p">])</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="s2">&quot;     Coins:&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">blue_coins</span><span class="p">,</span> <span class="s2">&quot;blue,&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">red_coins</span><span class="p">,</span> <span class="s2">&quot;red&quot;</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">_color_print_piles</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="s2">&quot;       Deck:&quot;</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">deck</span><span class="o">.</span><span class="n">cards</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="s2">&quot;    Discard:&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">discard_pile</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="nb">list</span><span class="p">(</span><span class="n">Color</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">c</span><span class="o">.</span><span class="n">colorize</span><span class="p">(</span><span class="s2">&quot;</span><span class="si">%6s</span><span class="s2">&quot;</span><span class="o">%</span><span class="n">c</span><span class="p">,</span> <span class="s2">&quot;pile:&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">piles</span><span class="p">[</span><span class="n">c</span><span class="p">]))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="s2">&quot;     Coins:&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">blue_coins</span><span class="p">,</span> <span class="s2">&quot;blue,&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">red_coins</span><span class="p">,</span> <span class="s2">&quot;red&quot;</span><span class="p">)</span>
+
+<div class="viewcode-block" id="Game.print_piles"><a class="viewcode-back" href="../../index.html#hanabi.deck.Game.print_piles">[docs]</a>    <span class="k">def</span> <span class="nf">print_piles</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_color_print_piles</span><span class="p">()</span></div>
+
+<div class="viewcode-block" id="Game.next_player"><a class="viewcode-back" href="../../index.html#hanabi.deck.Game.next_player">[docs]</a>    <span class="k">def</span> <span class="nf">next_player</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Switch to next player.</span>
+
+<span class="sd">        Player 0 is *always* the current_player.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">current_player</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>   <span class="c1"># called at game setup</span>
+            <span class="c1"># I keep these two constants for the moment:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">current_player</span> <span class="o">=</span> <span class="mi">0</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">other_player</span> <span class="o">=</span> <span class="mi">1</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="c1"># rotate players and hands</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">hands</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">hands</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="mi">0</span><span class="p">))</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">players</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">players</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="mi">0</span><span class="p">))</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">current_player_name</span> <span class="o">=</span> <span class="s1">&#39;</span><span class="se">\033</span><span class="s1">[1m</span><span class="si">%s</span><span class="se">\033</span><span class="s1">[0m&#39;</span><span class="o">%</span><span class="bp">self</span><span class="o">.</span><span class="n">players</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">current_player</span><span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">current_hand</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">hands</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">current_player</span><span class="p">]</span></div>
+
+        <span class="c1"># other nice ideas: https://stackoverflow.com/questions/23416381/circular-list-iterator-in-python</span>
+        <span class="c1"># itertools.cycle or players.append(pop(0))</span>
+
+<div class="viewcode-block" id="Game.command"><a class="viewcode-back" href="../../index.html#hanabi.deck.Game.command">[docs]</a>    <span class="k">def</span> <span class="nf">command</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">args</span><span class="p">):</span>
+        <span class="s2">&quot;Action: Run a python command from Hanabi (yes, it is a cheat code: self is the current Game).&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="s1">&#39;About to run `</span><span class="si">%s</span><span class="s1">`&#39;</span><span class="o">%</span><span class="n">args</span><span class="p">)</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">exec</span><span class="p">(</span><span class="n">args</span><span class="p">)</span>
+        <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="s1">&#39;Error:&#39;</span><span class="p">,</span> <span class="n">e</span><span class="p">)</span></div>
+            <span class="c1"># raise</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">score</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="nb">sum</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">piles</span><span class="o">.</span><span class="n">values</span><span class="p">())</span>
+
+<div class="viewcode-block" id="Game.run"><a class="viewcode-back" href="../../index.html#hanabi.deck.Game.run">[docs]</a>    <span class="k">def</span> <span class="nf">run</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">last_players</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">players</span><span class="p">)</span>
+            <span class="k">while</span> <span class="n">last_players</span><span class="p">:</span>
+                <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">deck</span><span class="o">.</span><span class="n">cards</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">log</span><span class="p">()</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="s2">&quot;--&gt; Last turns:&quot;</span><span class="p">,</span>
+                             <span class="s2">&quot; &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">last_players</span><span class="p">),</span>
+                             <span class="s2">&quot;may still play once.&quot;</span><span class="p">)</span>
+                    <span class="k">try</span><span class="p">:</span>
+                        <span class="n">last_players</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">players</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">current_player</span><span class="p">])</span>
+                    <span class="k">except</span> <span class="ne">ValueError</span><span class="p">:</span>
+                        <span class="k">pass</span>  <span class="c1"># if Alice &#39;x&#39;, she is removed but plays again</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">turn</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">ai</span><span class="p">)</span>
+                <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">score</span> <span class="o">==</span> <span class="mi">25</span><span class="p">:</span>
+                    <span class="k">raise</span> <span class="ne">StopIteration</span><span class="p">(</span><span class="s2">&quot;it is perfect!&quot;</span><span class="p">)</span>
+<span class="c1">#            self.log(&quot;Game finished because deck exhausted&quot;)</span>
+        <span class="k">except</span> <span class="p">(</span><span class="ne">KeyboardInterrupt</span><span class="p">,</span> <span class="ne">EOFError</span><span class="p">,</span> <span class="ne">StopIteration</span><span class="p">)</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="s1">&#39;Game finished because of&#39;</span><span class="p">,</span> <span class="n">e</span><span class="p">)</span>
+            <span class="k">pass</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">save</span><span class="p">(</span><span class="s1">&#39;autosave.py&#39;</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">One final glance at the table:&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">starting_deck</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">print_piles</span><span class="p">()</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">Goodbye. Your score is </span><span class="si">%d</span><span class="s2">&quot;</span><span class="o">%</span><span class="bp">self</span><span class="o">.</span><span class="n">score</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="Game.save"><a class="viewcode-back" href="../../index.html#hanabi.deck.Game.save">[docs]</a>    <span class="k">def</span> <span class="nf">save</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">filename</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Save starting deck and list of moves.&quot;&quot;&quot;</span>
+        <span class="n">f</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="s1">&#39;w&#39;</span><span class="p">)</span>
+        <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;&quot;&quot;</span>
+<span class="s2">players = </span><span class="si">%r</span><span class="s2"></span>
+<span class="s2">cards = </span><span class="si">%r</span><span class="s2"></span>
+<span class="s2">moves = </span><span class="si">%r</span><span class="s2"></span>
+<span class="s2">&quot;&quot;&quot;</span><span class="o">%</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">players</span><span class="p">,</span>
+     <span class="bp">self</span><span class="o">.</span><span class="n">starting_deck</span><span class="p">,</span>
+     <span class="bp">self</span><span class="o">.</span><span class="n">moves</span><span class="p">))</span></div>
+        <span class="c1"># fixme: seems that a deck&#39;s repr is its list of cards?</span>
+
+<div class="viewcode-block" id="Game.load"><a class="viewcode-back" href="../../index.html#hanabi.deck.Game.load">[docs]</a>    <span class="k">def</span> <span class="nf">load</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">filename</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Load a saved game, replay the moves.</span>
+
+<span class="sd">        A saved game consists of the variables players, cards and moves.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">f</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="n">filename</span><span class="p">)</span>
+        <span class="c1"># in python3, it is tricky to modify a variable with exec:</span>
+        <span class="c1">#   https://stackoverflow.com/questions/15086040/behavior-of-exec-function-in-python-2-and-python-3</span>
+        <span class="c1"># need globals for the Card and Color definitions, and loaded-dict for returned values</span>
+        <span class="n">loaded</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="k">for</span> <span class="n">l</span> <span class="ow">in</span> <span class="n">f</span><span class="p">:</span>
+            <span class="n">exec</span><span class="p">(</span><span class="n">l</span><span class="p">,</span> <span class="nb">globals</span><span class="p">(),</span> <span class="n">loaded</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="s1">&#39;Loaded:&#39;</span><span class="p">,</span> <span class="n">loaded</span><span class="p">)</span>
+        <span class="n">multi</span> <span class="o">=</span> <span class="kc">False</span>
+        <span class="n">players</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">loaded</span><span class="p">[</span><span class="s1">&#39;players&#39;</span><span class="p">])</span>
+        <span class="n">cards</span> <span class="o">=</span> <span class="n">loaded</span><span class="p">[</span><span class="s1">&#39;cards&#39;</span><span class="p">]</span>
+        <span class="n">moves</span> <span class="o">=</span> <span class="n">loaded</span><span class="p">[</span><span class="s1">&#39;moves&#39;</span><span class="p">]</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">reset</span><span class="p">(</span><span class="n">players</span><span class="p">,</span> <span class="n">multi</span><span class="p">,</span> <span class="n">cards</span><span class="p">)</span>
+        <span class="c1"># for m in moves:</span>
+        <span class="c1">#     self.turn(m)</span>
+        <span class="c1"># was simpler, but infinity-looped when user made a mistake</span>
+        <span class="k">while</span> <span class="n">moves</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">turn</span><span class="p">(</span><span class="n">moves</span><span class="p">)</span></div></div>
+
+
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s2">&quot;__main__&quot;</span><span class="p">:</span>
+    <span class="c1"># print (&quot;Red 4 is:&quot;, Card(Color.Red, 4))</span>
+
+    <span class="c1"># deck = Deck()</span>
+    <span class="c1"># print(&quot;Unshuffled:&quot;, deck)</span>
+    <span class="c1"># deck.shuffle()</span>
+    <span class="c1"># print(&quot;Shuffled:&quot;, deck)</span>
+
+    <span class="c1"># hands = deck.deal(5)</span>
+    <span class="c1"># alice, benji, clara, devon, elric = hands</span>
+    <span class="c1"># players = {0:&quot;Alice&quot;, 1: &quot;Benji&quot;, 2:&quot;Clara&quot;, 3:&quot;Dante&quot;, 4:&quot;Elric&quot;}</span>
+    <span class="c1"># for i, h in enumerate(hands): print(&quot;%s&#39;s hand is %s&quot;%(players[i], h))</span>
+
+    <span class="c1"># print (&quot;Is B1 in Alice&#39;s hand?&quot;, &quot;B1&quot; in alice.cards)</span>
+
+    <span class="c1"># try:</span>
+    <span class="c1">#     card = alice.pop(1)</span>
+    <span class="c1">#     print(&quot;Alice plays&quot;, card)</span>
+    <span class="c1"># except ValueError:</span>
+    <span class="c1">#     print(&quot;Alice can&#39;t play her 1st card&quot;)</span>
+
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">Let&#39;s start a new game&quot;</span><span class="p">)</span>
+    <span class="n">game</span> <span class="o">=</span> <span class="n">Game</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Here are the hands:&quot;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">game</span><span class="o">.</span><span class="n">hands</span><span class="p">)</span>
+
+    <span class="n">game</span><span class="o">.</span><span class="n">run</span><span class="p">()</span>
+</pre></div>
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+            <p class="logo"><a href="../../index.html">
+              <img class="logo" src="../../_static/hanabi.png" alt="Logo"/>
+            </a></p>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../../index.html">Hanabi 0.1.0 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../index.html" >Module code</a> &#187;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2018, JD Garaud.
+      Last updated on Apr 10, 2020 (nature).
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.8.4.
+    </div>
+  </body>
+</html>
