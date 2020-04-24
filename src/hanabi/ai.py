@@ -3,7 +3,7 @@ Artificial Intelligence to play Hanabi.
 """
 
 import itertools
-
+import random
 
 class AI:
     """

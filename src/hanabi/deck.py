@@ -394,6 +394,7 @@ class Game:
             target_index = 1
         target_index = int(target_index)
         if target_index == 0:
+            self.add_blue_coin()  # put back the blue coin
             raise ValueError("Cannot give a clue to yourself.")
 
         target_name = self.players[target_index]
@@ -409,6 +410,7 @@ class Game:
                 else:
                     card.color_clue = hint
         if not targetted_card:
+            self.add_blue_coin()  # put back the blue coin
             raise ValueError("This clue is not valid (it matches no card in the target hand)")
         self.next_player()
 
