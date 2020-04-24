@@ -83,6 +83,7 @@ class Cheater(AI):
                      if (1+game.discard_pile.cards.count(card))
                          == game.deck.card_count[card.number]
                    ]
+        precious = []  # FIXME : temporarily disable this feature, it doesn't work for 3+ players (save clue is given to the wrong player)
         if precious:
             clue = False
             # this loop is such that we prefer to clue a card close to chop
