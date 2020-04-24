@@ -15,6 +15,9 @@ scores=(
     ["game4.py"]=25
     ["game5.py"]=21
     ["game6.py"]=21
+    ["game7.py"]=23
+    ["game8.py"]=24
+    ["game9.py"]=0
     )
 
 failed=0

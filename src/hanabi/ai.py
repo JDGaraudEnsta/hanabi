@@ -3,7 +3,7 @@ Artificial Intelligence to play Hanabi.
 """
 
 import itertools
-
+import random
 
 class AI:
     """
@@ -108,9 +108,9 @@ class Cheater(AI):
 
         # if reach here, can't play, can't discard safely, no card to clue-save
         # Let's give a random clue, to see if partner can unblock me
-        if game.blue_coins > 0:
-            print('Cheater would clue randomly: cW')
-            return 'cw'
+        if game.blue_coins >0:
+            print ('Cheater would clue randomly:')
+            return 'c'+random.choice('12345RGBWY')
 
         # If reach here, can't play, can't discard safely
         # No blue-coin left.
