@@ -509,6 +509,7 @@ moves = %r
      self.starting_deck,
      self.moves))
         # fixme: seems that a deck's repr is its list of cards?
+        f.close()
 
     def load(self, filename):
         """Load a saved game, replay the moves.

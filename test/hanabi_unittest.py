@@ -124,6 +124,14 @@ class GameTest(unittest.TestCase):
 
     # lines 397, 431
 
+    def test_nb_players(self):
+        for i in range (2,6):
+            game = hanabi.Game(i)
+            game.quiet = True
+            ai = hanabi.ai.Cheater(game)
+            game.ai = ai
+            game.run()
+
 
 
 
