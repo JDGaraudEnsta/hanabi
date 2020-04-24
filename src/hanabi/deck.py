@@ -374,7 +374,8 @@ class Game:
         By default, the clue is given to the next player (backwards compatibility with 2 payers games).
         If clue[1] is given it is the initial (ABCDE) or index (1234) of the target player.
 
-        Example:
+        Example::
+
            hanabi> cWB    # is a white clue to Benji
            hanabi> c1     # is a 1 clue to next player
            hanabi> cRed   # is interpreted as a Red clue to Elric, probably not what you expected!
