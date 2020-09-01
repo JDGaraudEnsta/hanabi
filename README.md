@@ -106,6 +106,7 @@ then the installation:
 * [How to Write a Git Commit Message](https://chris.beams.io/posts/git-commit/)
 * [keep it simple](https://en.wikipedia.org/wiki/KISS_principle)
 * [rule of least surprise](http://www.catb.org/esr/writings/taoup/), [catbaz](http://www.catb.org/esr/writings/cathedral-bazaar/)
+* [how to debug small programs](https://ericlippert.com/2014/03/05/how-to-debug-small-programs/)
 * [rubber duck debugging](https://en.wikipedia.org/wiki/Rubber_duck_debugging)
 * [markdown (overview)](https://guides.github.com/features/mastering-markdown/), [markdown (in details)](https://github.github.com/gfm/)
 * [BGA state machine](https://www.slideshare.net/boardgamearena/bga-studio-focus-on-bga-game-state-machine)
